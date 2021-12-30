@@ -20,13 +20,18 @@ namespace u2vis
         /// </summary>
         [SerializeField]
         protected Color _highlightColor = Color.red;
+        /// <summary>
+        /// The name of the visualization style. Can be used to distinguish different styles when accessed globally.
+        /// </summary>
+        [SerializeField]
+        protected string _name;
         #endregion
 
         #region Public Properties
         /// <summary>
         /// Gets the color for highlighted values.
         /// </summary>
-        public Color HighlightColor => _highlightColor;
+        public Color HighlightColor { get; set; }
         #endregion
 
         #region Public Methods
@@ -79,6 +84,17 @@ namespace u2vis
             _colorMappings = colorMappings;
             _highlightColor = highlightColor;
         }
+
+        public virtual void SetColorMappings(Gradient[] gradients)
+        {
+            _colorMappings = gradients;
+        }
+
+        public virtual Gradient[] GetColorMappings()
+        {
+            return _colorMappings;
+        }
+
         #endregion
     }
 }
