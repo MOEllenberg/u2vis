@@ -15,6 +15,10 @@ public class u2visGeneralController : MonoBehaviour
     }
     #endregion
 
+    //idhandling. Should be put elsewhere later
+    private int nextID = 0;
+    public int NextID { get { nextID++; return nextID; } }
+
     /// <summary>
     /// Enum which represents the type of the visualization
     /// </summary>

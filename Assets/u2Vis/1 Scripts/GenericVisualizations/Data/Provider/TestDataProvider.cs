@@ -1,5 +1,6 @@
 ﻿using DataSetHandling;
 using System;
+using UnityEngine;
 
 namespace u2vis
 {
@@ -29,7 +30,7 @@ namespace u2vis
         /// <returns>The resulting DataSet.</returns>
         public DataSet CreateTestData()
         {
-            Random r = new Random();
+            System.Random r = new System.Random();
             DataSet data = new DataSet();
             data.Add(new StringDimension("Categories (attr 1)", null));
             data.Add(new IntegerDimension("Some Integers (attr 2)", null));
@@ -49,9 +50,11 @@ namespace u2vis
         /// <summary>
         /// Initializes this TestDataProvider by creating the test DataSet.
         /// </summary>
+        [ContextMenu("newRandomData")]
         public void Initialize()
         {
             _data = CreateTestData();
+            OnDataChanged();
         }
     }
 }

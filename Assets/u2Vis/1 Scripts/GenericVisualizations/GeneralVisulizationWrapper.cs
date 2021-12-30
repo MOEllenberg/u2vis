@@ -9,7 +9,9 @@ using static u2visGeneralController;
 public class GeneralVisulizationWrapper : MonoBehaviour
 {
 
-
+    /// <summary>
+    /// This struct holds the information 1 axis needs.
+    /// </summary>
     public struct AxisInformationStruct{
         /// <summary>
         /// The index the dimension has in the dataset.
@@ -55,6 +57,8 @@ public class GeneralVisulizationWrapper : MonoBehaviour
             DecimalPlacesOfLabels = decimalPlacesOfLabels;
         }
     }
+
+    #region serialized fields
     /// <summary>
     /// Id of the visualization
     /// </summary>
@@ -100,6 +104,9 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     /// </summary>
     [SerializeField]
     private int _selectedMaxItem;
+    /// <summary>
+    /// Array of the AxisInformation. Should have the length equivalent to the number of axes the vis has.
+    /// </summary>
     [SerializeField]
     private AxisInformationStruct[] _axisInformation;
     /// <summary>
@@ -107,18 +114,28 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     /// </summary>
     [SerializeField]
     private int[] _indicesOfMultiDimensionDataDimensions = null;
-
+    /// <summary>
+    /// Stores the Style refrence of the Vis. 
+    /// </summary>
     private GenericVisualizationStyle _style;
-
+    /// <summary>
+    /// The BarChartMesh. Only needed for 2D/3D Bar Charts.
+    /// </summary>
     [SerializeField]
     private Mesh _barChartMesh = null;
-
+    /// <summary>
+    /// The Thickness of the 2D Bars of a 2D Bar Chart.
+    /// </summary>
     [SerializeField]
     private float? _2DBarThickness = null;
-
+    /// <summary>
+    /// The thickness of the 3D Bars of a 3D Bar Chart (as Vector).
+    /// </summary>
     [SerializeField]
     private Vector2? _3DBarThickness = null;
+    #endregion
 
+    #region public properties
     public string VisID { get => _visID; }
     public VisType VisType1 { get => _visType; }
     public string CreatorName { get => _creatorName; set => _creatorName = value; }
@@ -134,10 +151,11 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     public BaseVisualizationView VisualizationView { get; private set; }
     public GenericDataPresenter DataPresenter { get; private set; }
     public GenericVisualizationStyle VisStyle { get=> _style; set { SetVisStyle(value); } }
+    #endregion
 
-
-
+    #region internal fields
     private bool initilized = false;
+    #endregion
     void Start()
     {
         
@@ -147,6 +165,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     {
 
         //generate id for vis here and set _visID
+        _visID = u2visGeneralController.Instance.NextID.ToString();
         _visType = visType;
         _creatorName = creatorName;
     }
@@ -193,10 +212,6 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         {
             _indicesOfMultiDimensionDataDimensions = indicesOfMultiDimensionDataDimensions;
         }
-
-        //@TODO: Add some kind of Event in DataProvider for updated data and listen to it here
-
-
 
         //@TODO: Add InitBehaviour!
         switch (_visType)
@@ -463,6 +478,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     }
     #endregion
 
+    #region color related setters
     private void SetVisStyle(GenericVisualizationStyle value)
     {
         throw new NotImplementedException();
@@ -477,17 +493,55 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     {
         throw new NotImplementedException();
     }
+    #endregion
 
+    #region updates
     public void UpdateCompleteVis()
     {
-        throw new NotImplementedException();
-
         if (!initilized)
         {
             Debug.LogError("This visualization is not initialized! Initialize it first.");
             throw new Exception("vis not initialized!");
         }
         //@TODO update functionality based on contents of private fields
+
+        //workaround. Does Update complete vis, might not be efficient. Might need to be updated.
+        switch (_visType)
+        {
+            case VisType.BarChart2D:
+                InitilizeBarChart2D(false);
+                break;
+            case VisType.BarChart3D:
+                InitilizeBarChart3D(false);
+                break;
+            case VisType.HeightMap:
+                InitilizeHeightMap(false);
+                break;
+            case VisType.LineChart2D:
+                InitilizeLineChart2D(false);
+                break;
+            case VisType.LineChart3D:
+                InitilizeLineChart3D(false);
+                break;
+            case VisType.ParallelCoordinates:
+                InitilizeParallelCoordinates(false);
+                break;
+            case VisType.PieChart2D:
+                InitilizePieChart2D(false);
+                break;
+            case VisType.PieChart3D:
+                InitilizePieChart3D(false);
+                break;
+            case VisType.RevolvedCharts:
+                InitilizeRevolvedCharts(false);
+                break;
+            case VisType.Scatterplot:
+                InitilizeScatterplot(false);
+                break;
+            case VisType.StackedBar:
+                InitilizeStackedBar(false);
+                break;
+        }
     }
 
     public void UpdateAxes()
@@ -514,7 +568,63 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         //@TODO update functionality based on contents of private fields
     }
     //@TODO write setters for each AxisProperty by dimension
+    #endregion
 
+    #region update meshes by type
+    private void UpdateMeshStackedBar(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
 
+    private void UpdateMeshScatterplot(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshRevolvedCharts(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshPieChart3D(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshPieChart2D(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshParallelCoordinates(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshLineChart3D(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshLineChart2D(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshHeightMap(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshBarChart3D(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateMeshBarChart2D(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
 
 }
