@@ -145,7 +145,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     public AbstractDataProvider DataProvider { get => _dataProvider; set { _dataProvider = value; UpdateCompleteVis(); } }
     public int SelectedMinItem { get => _selectedMinItem; set { _selectedMinItem = value; UpdateCompleteVis(); } }
     public int SelectedMaxItem { get => _selectedMaxItem; set { _selectedMaxItem = value; UpdateCompleteVis(); } }
-    internal AxisInformationStruct[] AxisInformation { get => _axisInformation; set { _axisInformation = value; UpdateAxes(); } }
+    public AxisInformationStruct[] AxisInformation { get => _axisInformation; set { _axisInformation = value; UpdateAxes(); } }
     public int[] IndicesOfMultiDimensionDataDimensions { get => _indicesOfMultiDimensionDataDimensions; set { _indicesOfMultiDimensionDataDimensions = value; UpdateCompleteVis(); } }
 
     public BaseVisualizationView VisualizationView { get; private set; }
@@ -354,7 +354,90 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
     private void InitilizeBarChart3D(bool withDefaults)
     {
-        throw new NotImplementedException();
+        GenericDataPresenter presenter = gameObject.GetComponent<GenericDataPresenter>();
+        BarChart3D barChart = gameObject.GetComponent<BarChart3D>();
+        if (presenter is MultiDimDataPresenter)
+        {
+            Debug.LogError($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+            throw new Exception($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+        }
+        if (!withDefaults)
+        {
+            if (_axisInformation.Length != 3)
+            {
+                Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 3.");
+                throw new Exception("Wrong amount of AxisInformation.");
+            }
+            List<int> dimIndices = new List<int>();
+            foreach (var information in _axisInformation)
+            {
+                dimIndices.Add(information.DimensionIndex);
+            }
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
+            if (_barChartMesh == null)
+            {
+                _barChartMesh = u2visGeneralController.Instance.Default3DBarChartMesh;
+            }
+            if (_3DBarThickness == null)
+            {
+                _3DBarThickness = u2visGeneralController.Instance.Default3DBarThickness;
+            }
+        }
+        else
+        {
+            List<int> dimIndices = new List<int>();
+            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[0]);
+            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[1]);
+            Debug.Log(_dataProvider.gameObject.name);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            _axisInformation = new AxisInformationStruct[2];
+            for (int i = 0; i < _axisInformation.Length; i++)
+            {
+                _axisInformation[i] = new AxisInformationStruct(
+                    u2visGeneralController.Instance.DefaultDimensionIndices[i],
+                    u2visGeneralController.Instance.DefaultCategoricalFlag,
+                    u2visGeneralController.Instance.DefaultShowAxisFlag,
+                    u2visGeneralController.Instance.DefaultAxisPrefab,
+                    u2visGeneralController.Instance.DefaultNumberOfTicks,
+                    u2visGeneralController.Instance.DefaultLabelIntervall,
+                    u2visGeneralController.Instance.DefaultLabelOrientation,
+                    u2visGeneralController.Instance.DefaultLabelDecimalPlaces);
+            }
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
+            _barChartMesh = u2visGeneralController.Instance.Default2DBarChartMesh;
+            _3DBarThickness = u2visGeneralController.Instance.Default3DBarThickness;
+        }
+        barChart.Initialize(presenter, _axisInformation[0].AxisPrefab, _style, _barChartMesh);
+        barChart.BarThickness = (Vector2)_3DBarThickness;
+        barChart.ShowAxes = _axisInformation[0].ShowAxis;
+        barChart.Size = _visSize;
+        barChart.Rebuild();
+
+        DataPresenter = presenter;
+        VisualizationView = barChart;
+        u2visGeneralController.Instance.AddVis(this);
+        initilized = true;
     }
     
     private void InitilizeBarChart2D(bool withDefaults)
@@ -453,7 +536,10 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         {
             _2DBarThickness = barThickness;
             _barChartMesh = barChart2DMesh;
-            UpdateContentMeshes();
+            if (initilized)
+                UpdateContentMeshes();
+            else
+                Debug.Log("You still need to initilize the vis");
         }
         else
         {
@@ -493,6 +579,40 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     {
         throw new NotImplementedException();
     }
+    #endregion
+
+    #region set axis values by axis index
+    //@TODO write setters for each AxisProperty by dimension
+    public void SetAxisValuesByAxisIndex(int axisIndex, int? dimensionIndexToBe = null, bool? isCategorical =null, bool? showAxis = null, GenericAxisView axisPrefab=null,int? numberOfTicks=null,int? labelInterval=null, LabelOrientation? labelOrientation=null,int? decimalPlacesOfLabels=null)
+    {
+        if (axisIndex >= _axisInformation.Length - 1)
+        {
+            Debug.LogError("Axis Index Does Not Exist!)");
+            return;
+        }
+        AxisInformationStruct oldInfo = _axisInformation[axisIndex];
+        int newAxisDim = dimensionIndexToBe != null ? (int)dimensionIndexToBe : oldInfo.DimensionIndex;
+        bool newCategorical = isCategorical != null ? (bool)isCategorical : oldInfo.IsCategorigal;
+        bool newShowAxis = showAxis != null ? (bool)showAxis : oldInfo.ShowAxis;
+        GenericAxisView newAxisPrefab = axisPrefab != null ? axisPrefab : oldInfo.AxisPrefab;
+        int newNumberOfTicks = numberOfTicks != null ? (int)numberOfTicks : oldInfo.NumberOfTicks;
+        int newLabelInterval = labelInterval != null ? (int)labelInterval : oldInfo.LabelInterval;
+        LabelOrientation newLabelOrientation = labelOrientation != null ? (LabelOrientation)labelOrientation : oldInfo.LabelOrientation;
+        int newDecimalPlaces = decimalPlacesOfLabels != null ? (int)decimalPlacesOfLabels : oldInfo.DecimalPlacesOfLabels;
+
+        AxisInformation[axisIndex] = new AxisInformationStruct(
+            dimensionIndex: newAxisDim, 
+            isCategorigal: newCategorical, 
+            showAxis: newShowAxis,
+            axisPrefab: newAxisPrefab,
+            numberOfTicks: newNumberOfTicks,
+            labelInterval: newLabelInterval,
+            labelOrientation: newLabelOrientation,
+            decimalPlacesOfLabels: newDecimalPlaces
+        );
+        UpdateAxes();
+    }
+
     #endregion
 
     #region updates
@@ -546,6 +666,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
     public void UpdateAxes()
     {
+        UpdateCompleteVis();
         throw new NotImplementedException();
 
         if (!initilized)
@@ -558,6 +679,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
     public void UpdateContentMeshes()
     {
+        UpdateCompleteVis();
         throw new NotImplementedException();
 
         if (!initilized)
@@ -567,7 +689,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
         //@TODO update functionality based on contents of private fields
     }
-    //@TODO write setters for each AxisProperty by dimension
+    
     #endregion
 
     #region update meshes by type

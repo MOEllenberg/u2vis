@@ -17,6 +17,8 @@ public class WrapperTester : MonoBehaviour
     [SerializeField]
     private GenericAxisView axisPrefab;
 
+    private GeneralVisulizationWrapper currentWrapper;
+
     [ContextMenu("Test!")]
     public void Test()
     {
@@ -51,7 +53,7 @@ public class WrapperTester : MonoBehaviour
             case u2visGeneralController.VisType.StackedBar:
                 break;
         }
-
+        currentWrapper = wrapper;
     }
 
     [ContextMenu("Test with defaults!")]
@@ -59,6 +61,7 @@ public class WrapperTester : MonoBehaviour
     {
         GeneralVisulizationWrapper wrapper = u2visGeneralController.Instance.CreateVisByType(visToTest, parentToBe, "TestingWithDefaults");
         wrapper.InitilizeWithDefaults();
+        currentWrapper = wrapper;
     }
 
 }

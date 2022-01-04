@@ -98,9 +98,12 @@ public class u2visGeneralController : MonoBehaviour
     /// </summary>
     private Dictionary<string,GeneralVisulizationWrapper> _visulizations = new Dictionary<string, GeneralVisulizationWrapper>();
 
+    private Dictionary<string, List<GeneralVisulizationWrapper>> _groups = new Dictionary<string, List<GeneralVisulizationWrapper>>();
+
     public AbstractDataProvider DefaultDataprovider => _defaultDataProvider;
 
     public Dictionary<string, GeneralVisulizationWrapper> Visulizations { get => _visulizations; }
+    public Dictionary<string, List<GeneralVisulizationWrapper>> Groups { get => _groups; }
     public Mesh Default2DBarChartMesh { get => _default2DBarChartMesh; set => _default2DBarChartMesh = value; }
     public bool DefaultCategoricalFlag { get => _defaultCategoricalFlag; set => _defaultCategoricalFlag = value; }
     public LabelOrientation DefaultLabelOrientation { get => _defaultLabelOrientation; set => _defaultLabelOrientation = value; }
@@ -240,5 +243,86 @@ public class u2visGeneralController : MonoBehaviour
         GeneralVisulizationWrapper wrapper = visObject.AddComponent<GeneralVisulizationWrapper>();
         wrapper.Create(type,creatorName);
         return wrapper;
+    }
+
+    public List<GeneralVisulizationWrapper> CreateGroup(string groupName, List<GeneralVisulizationWrapper> members)
+    {
+        if(members.Count>0)
+            _groups.Add(groupName, members);
+        else
+        {
+            Debug.Log("Don't make empty groups!");
+            return null;
+        }
+        return _groups[groupName];
+    }
+
+    public List<GeneralVisulizationWrapper> AddVisualizationsToGroup(string groupName, List<GeneralVisulizationWrapper> newMembers)
+    {
+        if (newMembers.Count > 0)
+        {
+            if (_groups.ContainsKey(groupName))
+            {
+                _groups[groupName].AddRange(newMembers);
+            }
+            else
+            {
+                Debug.LogError("no group with the given name does exist. Consider creating a new one.");
+            }
+        }
+        else
+        {
+            Debug.Log("Don't add nothing to a group!");
+        }
+        return _groups[groupName];
+    }
+
+    public List<GeneralVisulizationWrapper> RemoveVisualizationsFromGroup(string groupName, List<GeneralVisulizationWrapper> membersToRemove)
+    {
+        if (membersToRemove.Count > 0)
+        {
+            if (_groups.ContainsKey(groupName))
+            {
+                foreach(var member in membersToRemove)
+                {
+                    if (_groups[groupName].Contains(member))
+                    {
+                        _groups[groupName].Remove(member);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"The Wrapper with the ID {member.VisID} was not contained in the group {groupName} where you wanted it to remove from.");
+                    }
+                }
+                if (_groups[groupName].Count == 0) //Want to do it this way?
+                {
+                    _groups.Remove(groupName);
+                    Debug.Log("Group was Empty. Therefore Group got deleted.");
+                    return null;
+                }
+            }
+            else
+            {
+                Debug.LogError("no group with the given name does exist. Can't delete Elements from not existing groups.");
+            }
+        }
+        else
+        {
+            Debug.Log("Don't remove nothing from a group!");
+        }
+        
+        return _groups[groupName];
+    }
+
+    public void DeleteGroup(string groupName)
+    {
+        if (_groups.ContainsKey(groupName))
+        {
+            _groups.Remove(groupName);
+        }
+        else
+        {
+            Debug.LogError("The Group you're trying to remove does not exist!");
+        }
     }
 }
