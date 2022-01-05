@@ -136,6 +136,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region public properties
+    //for all properties, see fields.
     public string VisID { get => _visID; }
     public VisType VisType1 { get => _visType; }
     public string CreatorName { get => _creatorName; set => _creatorName = value; }
@@ -154,6 +155,9 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region internal fields
+    /// <summary>
+    /// flag if the visualization is initialized
+    /// </summary>
     private bool initilized = false;
     #endregion
     void Start()
@@ -161,6 +165,11 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Creates a new visualization. Visualization gets its <see cref="VisType"/>, ID and the creator name. It still needs to be initilized with either <see cref="Initilize"/> or <see cref="InitilizeWithDefaults"/>
+    /// </summary>
+    /// <param name="visType"></param>
+    /// <param name="creatorName"></param>
     public void Create(VisType visType, string creatorName)
     {
 
@@ -169,6 +178,19 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         _visType = visType;
         _creatorName = creatorName;
     }
+
+    /// <summary>
+    /// Initializes the visualization with the given values.
+    /// </summary>
+    /// <param name="size"></param>
+    /// <param name="dataProvider"></param>
+    /// <param name="selectedMinItem"></param>
+    /// <param name="selectedMaxItem"></param>
+    /// <param name="axisInformation"></param>
+    /// <param name="indicesOfMultiDimensionDataDimensions">Only needs to be used for Visualizations with a <see cref="MultiDimDataPresenter"/>, otherwise should be null</param>
+    /// <param name="colormappings">only needs to be used if no <see cref="GenericVisualizationStyle"/> is provided with style. Will create a new Style together with highlightcolor.</param>
+    /// <param name="highlightcolor">only needs to be used if no <see cref="GenericVisualizationStyle"/> is provided with style. Will create a new Style attached to this visualization together with colormappings.</param>
+    /// <param name="style">only needs to be used if neither colormappings or highlightcolor are provided. Is a refrence to an extern style, which will be used for the visualization.</param>
     public void Initilize(Vector3 size, AbstractDataProvider dataProvider, int selectedMinItem, int selectedMaxItem, AxisInformationStruct[] axisInformation, int[] indicesOfMultiDimensionDataDimensions = null, Gradient[] colormappings = null, Color? highlightcolor = null, GenericVisualizationStyle style=null)
     {
         if (initilized)
@@ -214,9 +236,13 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
 
         //@TODO: Add InitBehaviour!
-        InitilizeSwitcher(false);     
+        InitilizeSwitcher(false);
+        u2visGeneralController.Instance.AddVis(this);
     }
 
+    /// <summary>
+    /// Initializes the visualization with the default values given in <see cref="u2visGeneralController"/>
+    /// </summary>
     public void InitilizeWithDefaults()
     {
 
@@ -233,47 +259,13 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         _style = u2visGeneralController.Instance.DefaultStyle;
         //@TODO: Add some kind of Event in DataProvider for updated data and listen to it here
 
-        switch (_visType)
-        {
-            case VisType.BarChart2D:
-                InitilizeBarChart2D(true);
-                break;
-            case VisType.BarChart3D:
-                InitilizeBarChart3D(true);
-                _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
-                break;
-            case VisType.HeightMap:
-                InitilizeDefaultMultiDim(true);
-                break;
-            case VisType.LineChart2D:
-                _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
-                InitilizeDefaultMultiDim(true);
-                break;
-            case VisType.LineChart3D:
-                InitilizeDefaultMultiDim(true);
-                break;
-            case VisType.ParallelCoordinates:
-                InitilizeParallelCoordinates(true);
-                break;
-            case VisType.PieChart2D:
-                InitilizeDefaultMultiDim(true);
-                break;
-            case VisType.PieChart3D:
-                InitilizeDefaultMultiDim(true);
-                break;
-            case VisType.RevolvedCharts:
-                InitilizeRevolvedCharts(true);
-                break;
-            case VisType.Scatterplot:
-                InitilizeScatterplot(true);
-                break;
-            case VisType.StackedBar:
-                InitilizeStackedBar(true);
-                break;
-        }
+        InitilizeSwitcher(true);
+        u2visGeneralController.Instance.AddVis(this);
     }
 
     #region initialize by type
+
+    //in this region diffrent vis types get initilized in their needed ways.
     private void InitilizeStackedBar(bool withDefaults)
     {
         throw new NotImplementedException();
@@ -285,16 +277,6 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     }
 
     private void InitilizeRevolvedCharts(bool withDefaults)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void InitilizePieChart3D(bool withDefaults)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void InitilizePieChart2D(bool withDefaults)
     {
         throw new NotImplementedException();
     }
@@ -394,18 +376,14 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
         multiDimVis.Initialize(presenter, _axisInformation[0].AxisPrefab, _style);
         multiDimVis.ShowAxes = _axisInformation[0].ShowAxis;
+        if (_visType == VisType.PieChart3D || _visType == VisType.PieChart2D)
+            multiDimVis.ShowAxes = false;
         multiDimVis.Size = _visSize;
         multiDimVis.Rebuild();
 
         DataPresenter = presenter;
         VisualizationView = multiDimVis;
-        u2visGeneralController.Instance.AddVis(this);
         initilized = true;
-    }
-
-    private void InitilizeHeightMap(bool withDefaults)
-    {
-        throw new NotImplementedException();
     }
 
     private void InitilizeBarChart3D(bool withDefaults)
@@ -489,7 +467,6 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
         DataPresenter = presenter;
         VisualizationView = barChart;
-        u2visGeneralController.Instance.AddVis(this);
         initilized = true;
     }
     
@@ -579,12 +556,16 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
         DataPresenter = presenter;
         VisualizationView = barChart;
-        u2visGeneralController.Instance.AddVis(this);
         initilized = true;
     }
     #endregion
 
     #region setters for vis specific values
+    /// <summary>
+    /// Sets the BarChart2D specific values.
+    /// </summary>
+    /// <param name="barThickness"></param>
+    /// <param name="barChart2DMesh"></param>
     public void SetBarChart2DValues(float barThickness, Mesh barChart2DMesh)
     {
         if (_visType == VisType.BarChart2D)
@@ -603,6 +584,11 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the BarChar3D specific values.
+    /// </summary>
+    /// <param name="barThickness"></param>
+    /// <param name="barChart3DMesh"></param>
     public void SetBarChart3DValues(Vector2 barThickness, Mesh barChart3DMesh)
     {
         if (_visType == VisType.BarChart3D)
@@ -640,7 +626,18 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region set axis values by axis index
-    //@TODO write setters for each AxisProperty by dimension
+    /// <summary>
+    /// sets the axis properties for the axis with index axisIndex. if a value of a property is left out, it will be null and then default to the old propertie.
+    /// </summary>
+    /// <param name="axisIndex"></param>
+    /// <param name="dimensionIndexToBe"></param>
+    /// <param name="isCategorical"></param>
+    /// <param name="showAxis"></param>
+    /// <param name="axisPrefab"></param>
+    /// <param name="numberOfTicks"></param>
+    /// <param name="labelInterval"></param>
+    /// <param name="labelOrientation"></param>
+    /// <param name="decimalPlacesOfLabels"></param>
     public void SetAxisValuesByAxisIndex(int axisIndex, int? dimensionIndexToBe = null, bool? isCategorical =null, bool? showAxis = null, GenericAxisView axisPrefab=null,int? numberOfTicks=null,int? labelInterval=null, LabelOrientation? labelOrientation=null,int? decimalPlacesOfLabels=null)
     {
         if (axisIndex >= _axisInformation.Length - 1)
@@ -674,6 +671,10 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region utils
+    /// <summary>
+    /// calls the appropriate TypeInitilizer deoending on <see cref="_visType"/>
+    /// </summary>
+    /// <param name="initWithDefaults">flag if default values should be used.</param>
     private void InitilizeSwitcher(bool initWithDefaults)
     {
         switch (_visType)
@@ -728,6 +729,9 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region updates
+    /// <summary>
+    /// Updates the complete visualization with a complete rebuild.
+    /// </summary>
     public void UpdateCompleteVis()
     {
         if (!initilized)
@@ -741,6 +745,10 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         InitilizeSwitcher(false);
     }
 
+    /// <summary>
+    /// Only updates the axes of a visualization. 
+    /// Not yet implemented. Rebuilds all.
+    /// </summary>
     public void UpdateAxes()
     {
         UpdateCompleteVis();
@@ -754,6 +762,10 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         //@TODO update functionality based on contents of private fields
     }
 
+    /// <summary>
+    /// Only updates the Content Mesh of the visualization.
+    /// Not yet implemented. Rebuilds all.
+    /// </summary>
     public void UpdateContentMeshes()
     {
         UpdateCompleteVis();
@@ -770,6 +782,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region update meshes by type
+    //here the meshes will be updated by their type.
     private void UpdateMeshStackedBar(bool withDefaults)
     {
         throw new NotImplementedException();
