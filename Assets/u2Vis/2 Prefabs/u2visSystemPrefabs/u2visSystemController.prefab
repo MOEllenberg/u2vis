@@ -48,14 +48,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _defaultVisPrefabs:
   - {fileID: 7073822016861053180, guid: 2cf30a36caae7d64db38584176f71817, type: 3}
-  - {fileID: 3679889690591110363, guid: 8103145d992b5c24fa0120320f753f4c, type: 3}
+  - {fileID: 7071764797811440164, guid: 3a8dc900eeaeb764ab9819ad5ee8e8ba, type: 3}
   - {fileID: 9031965998451768014, guid: c3cd799fe20982241bbe2162cf7dba88, type: 3}
   - {fileID: 2886718211770622556, guid: ac2f4a946702dfd4daff4d9c10970f69, type: 3}
   - {fileID: 2290149018460027559, guid: b204853d3dee0f44ab08af1f51cebd4d, type: 3}
   - {fileID: 7819944907640819384, guid: 8665d56bd4d3c064ea2ac141611e4c61, type: 3}
   - {fileID: 3350004290850267292, guid: a94a61348be7cd44599cba2bd949b9e9, type: 3}
   - {fileID: 8298903803571428384, guid: 852ee01ac4a60184083adff7f07ff86c, type: 3}
-  _defaultDataProvider: {fileID: 5378982396253140935}
+  _defaultDataProvider: {fileID: 5378982396608196078}
   _defaultCategoricalFlag: 0
   _defaultLabelOrientation: 1
   _defaultNumberOfTicks: 4
@@ -64,11 +64,11 @@ MonoBehaviour:
   _defaultAxisPrefab: {fileID: 5650031274069596738, guid: dc8563653dd0fe54883b634b92f049db,
     type: 3}
   _defaultShowAxisFlag: 1
-  _defaultSize: {x: 1, y: 1, z: 1}
+  _defaultSize: {x: 0.9, y: 0.9, z: 0.9}
   _defaultDimensionIndices: 000000000100000002000000
   _defaultMinItem: 0
   _defaultMaxItem: 5
-  _defaultMultiDimIndices: 
+  _defaultMultiDimIndices: 040000000500000006000000
   _defaultStyle: {fileID: 5378982396439272195}
   _default2DBarChartMesh: {fileID: 4300000, guid: 643f93ef952089e4ab1a9c7b86459170,
     type: 3}

@@ -15,6 +15,8 @@ public class WrapperTester : MonoBehaviour
     [SerializeField]
     private GenericVisualizationStyle style;
     [SerializeField]
+    private GenericVisualizationStyle categoricalStyle;
+    [SerializeField]
     private GenericAxisView axisPrefab;
 
     private GeneralVisulizationWrapper currentWrapper;
@@ -23,28 +25,47 @@ public class WrapperTester : MonoBehaviour
     public void Test()
     {
         GeneralVisulizationWrapper wrapper = u2visGeneralController.Instance.CreateVisByType(visToTest,parentToBe,"Testing");
+
+        AxisInformationStruct[] axisInformationStructs = new AxisInformationStruct[2];
+        axisInformationStructs[0] = new AxisInformationStruct(0, true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs[1] = new AxisInformationStruct(1, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+
+        AxisInformationStruct[] axisInformationStructs3D = new AxisInformationStruct[3];
+        axisInformationStructs3D[0] = new AxisInformationStruct(0, true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs3D[1] = new AxisInformationStruct(1, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs3D[2] = new AxisInformationStruct(1, false, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+
+        int[] multidim = { 0, 1, 2, 3 };
+
         switch (visToTest)
         {
             case u2visGeneralController.VisType.BarChart2D:
-                AxisInformationStruct[] axisInformationStructs = new AxisInformationStruct[2];
-                axisInformationStructs[0] = new AxisInformationStruct(0, true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
-                axisInformationStructs[1] = new AxisInformationStruct(1, false, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+
                 wrapper.SetBarChart2DValues(0.9f, u2visGeneralController.Instance.Default2DBarChartMesh);
-                wrapper.Initilize(Vector3.one, dataProvider, 0, 10, axisInformationStructs, null, null, null, style);
+                wrapper.Initilize(new Vector3(0.9f,0.9f,0.9f), dataProvider, 0, 10, axisInformationStructs, null, null, null, style);
                 break;
             case u2visGeneralController.VisType.BarChart3D:
+                
+                wrapper.SetBarChart3DValues(new Vector2(0.9f,0.9f), u2visGeneralController.Instance.Default3DBarChartMesh);
+                //TODO: size does not scale axes. Is a u2vis issue, not a wrapper issue. Has to be fixed some day in the future. Maybe use size for scale? Ask Marc
+                wrapper.Initilize(new Vector3(0.9f, 0.9f, 0.9f), dataProvider, 0, 10, axisInformationStructs3D, multidim, null, null, style);
                 break;
             case u2visGeneralController.VisType.HeightMap:
+                wrapper.Initilize(new Vector3(0.9f, 0.9f, 0.9f), dataProvider, 0, 10, axisInformationStructs3D, multidim, null, null, categoricalStyle);
                 break;
             case u2visGeneralController.VisType.LineChart2D:
+                wrapper.Initilize(new Vector3(0.9f, 0.9f, 0.9f), dataProvider, 0, 10, axisInformationStructs3D, multidim, null, null, categoricalStyle);
                 break;
             case u2visGeneralController.VisType.LineChart3D:
+                wrapper.Initilize(new Vector3(0.9f, 0.9f, 0.9f), dataProvider, 0, 10, axisInformationStructs3D, multidim, null, null, categoricalStyle);
                 break;
             case u2visGeneralController.VisType.ParallelCoordinates:
                 break;
             case u2visGeneralController.VisType.PieChart2D:
+                wrapper.Initilize(new Vector3(0.9f, 0.9f, 0.9f), dataProvider, 0, 10, axisInformationStructs3D, multidim, null, null, categoricalStyle);
                 break;
             case u2visGeneralController.VisType.PieChart3D:
+                wrapper.Initilize(new Vector3(0.9f, 0.9f, 0.9f), dataProvider, 0, 10, axisInformationStructs3D, multidim, null, null, categoricalStyle);
                 break;
             case u2visGeneralController.VisType.RevolvedCharts:
                 break;

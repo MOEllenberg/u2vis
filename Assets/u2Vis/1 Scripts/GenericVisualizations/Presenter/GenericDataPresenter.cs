@@ -245,6 +245,21 @@ namespace u2vis
             SetupInitialAxisPresenters();
         }
 
+        public virtual void SetAxisPresenters(AxisPresenter[] presenters)
+        {
+            if (!_isInitialized)
+            {
+                Debug.LogError("The datapresenter must be initilized before setting axispresenters");
+                return;
+            }
+            if (presenters.Length != NumberOfDimensions)
+            {
+                Debug.LogError($"The amount of AxisPresenters ( {presenters.Length} ) does not match the Number of dimensions ( {NumberOfDimensions} )");
+                return;
+            }
+            _axisPresenters = presenters;
+        }
+
         #region Highlights
         /// <summary>
         /// Toggles the highlight flag for the specified index.

@@ -214,42 +214,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
 
         //@TODO: Add InitBehaviour!
-        switch (_visType)
-        {
-            case VisType.BarChart2D:
-                InitilizeBarChart2D(false);
-                break;
-            case VisType.BarChart3D:
-                InitilizeBarChart3D(false);
-                break;
-            case VisType.HeightMap:
-                InitilizeHeightMap(false);
-                break;
-            case VisType.LineChart2D:
-                InitilizeLineChart2D(false);
-                break;
-            case VisType.LineChart3D:
-                InitilizeLineChart3D(false);
-                break;
-            case VisType.ParallelCoordinates:
-                InitilizeParallelCoordinates(false);
-                break;
-            case VisType.PieChart2D:
-                InitilizePieChart2D(false);
-                break;
-            case VisType.PieChart3D:
-                InitilizePieChart3D(false);
-                break;
-            case VisType.RevolvedCharts:
-                InitilizeRevolvedCharts(false);
-                break;
-            case VisType.Scatterplot:
-                InitilizeScatterplot(false);
-                break;
-            case VisType.StackedBar:
-                InitilizeStackedBar(false);
-                break;
-        }       
+        InitilizeSwitcher(false);     
     }
 
     public void InitilizeWithDefaults()
@@ -275,24 +240,26 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                 break;
             case VisType.BarChart3D:
                 InitilizeBarChart3D(true);
+                _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
                 break;
             case VisType.HeightMap:
-                InitilizeHeightMap(true);
+                InitilizeDefaultMultiDim(true);
                 break;
             case VisType.LineChart2D:
-                InitilizeLineChart2D(true);
+                _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeDefaultMultiDim(true);
                 break;
             case VisType.LineChart3D:
-                InitilizeLineChart3D(true);
+                InitilizeDefaultMultiDim(true);
                 break;
             case VisType.ParallelCoordinates:
                 InitilizeParallelCoordinates(true);
                 break;
             case VisType.PieChart2D:
-                InitilizePieChart2D(true);
+                InitilizeDefaultMultiDim(true);
                 break;
             case VisType.PieChart3D:
-                InitilizePieChart3D(true);
+                InitilizeDefaultMultiDim(true);
                 break;
             case VisType.RevolvedCharts:
                 InitilizeRevolvedCharts(true);
@@ -337,43 +304,46 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         throw new NotImplementedException();
     }
 
-    private void InitilizeLineChart3D(bool withDefaults)
+    private void InitilizeDefaultMultiDim(bool withDefaults)
     {
-        throw new NotImplementedException();
-    }
-
-    private void InitilizeLineChart2D(bool withDefaults)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void InitilizeHeightMap(bool withDefaults)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void InitilizeBarChart3D(bool withDefaults)
-    {
-        GenericDataPresenter presenter = gameObject.GetComponent<GenericDataPresenter>();
-        BarChart3D barChart = gameObject.GetComponent<BarChart3D>();
-        if (presenter is MultiDimDataPresenter)
+        MultiDimDataPresenter presenter = gameObject.GetComponent<MultiDimDataPresenter>();
+        BaseVisualizationView multiDimVis;
+        switch (_visType)
         {
-            Debug.LogError($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
-            throw new Exception($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+            case VisType.HeightMap:
+                multiDimVis = gameObject.GetComponent<Heightmap>();
+                break;
+            case VisType.LineChart2D:
+                multiDimVis = gameObject.GetComponent<LineChart2D>();
+                break;
+            case VisType.LineChart3D:
+                multiDimVis = gameObject.GetComponent<LineChart3D>();
+                _visSize = new Vector3(_visSize.x, _visSize.y, 0.2f); //TODO: Here the size does not scale the axis problem comes back. ave to fix that later.
+                break;
+            case VisType.PieChart2D:
+                multiDimVis = gameObject.GetComponent<PieChart2D>();
+                break;
+            case VisType.PieChart3D:
+                multiDimVis = gameObject.GetComponent<PieChart3D>();
+                break;
+            default:
+                Debug.LogError("this vis type does not use a default multi dim data presenter. Default to 2dLinechart");
+                multiDimVis = gameObject.GetComponent<LineChart2D>();
+                break;
         }
+
         if (!withDefaults)
         {
             if (_axisInformation.Length != 3)
             {
-                Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 3.");
+                Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 2.");
                 throw new Exception("Wrong amount of AxisInformation.");
             }
             List<int> dimIndices = new List<int>();
-            foreach (var information in _axisInformation)
-            {
-                dimIndices.Add(information.DimensionIndex);
-            }
-            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            dimIndices.Add(_axisInformation[1].DimensionIndex);
+            dimIndices.Add(_axisInformation[2].DimensionIndex);
+            dimIndices.AddRange(_indicesOfMultiDimensionDataDimensions);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _axisInformation[0].DimensionIndex, dimIndices.ToArray());
             presenter.ResetAxisProperties();
             AxisPresenter[] axisPresenter = presenter.AxisPresenters;
             for (int i = 0; i < axisPresenter.Length; i++)
@@ -384,6 +354,87 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                 axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
                 axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
             }
+            presenter.SetAxisPresenters(axisPresenter);
+        }
+        else
+        {
+
+            _axisInformation = new AxisInformationStruct[3];
+            for (int i = 0; i < _axisInformation.Length; i++)
+            {
+                _axisInformation[i] = new AxisInformationStruct(
+                    u2visGeneralController.Instance.DefaultDimensionIndices[i],
+                    u2visGeneralController.Instance.DefaultCategoricalFlag,
+                    u2visGeneralController.Instance.DefaultShowAxisFlag,
+                    u2visGeneralController.Instance.DefaultAxisPrefab,
+                    u2visGeneralController.Instance.DefaultNumberOfTicks,
+                    u2visGeneralController.Instance.DefaultLabelIntervall,
+                    u2visGeneralController.Instance.DefaultLabelOrientation,
+                    u2visGeneralController.Instance.DefaultLabelDecimalPlaces);
+            }
+
+            List<int> dimIndices = new List<int>();
+            dimIndices.Add(_axisInformation[1].DimensionIndex);
+            dimIndices.Add(_axisInformation[2].DimensionIndex);
+            dimIndices.AddRange(_indicesOfMultiDimensionDataDimensions);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _axisInformation[0].DimensionIndex, dimIndices.ToArray());
+
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            presenter.ResetAxisProperties();
+
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            presenter.SetAxisPresenters(axisPresenter);
+        }
+        multiDimVis.Initialize(presenter, _axisInformation[0].AxisPrefab, _style);
+        multiDimVis.ShowAxes = _axisInformation[0].ShowAxis;
+        multiDimVis.Size = _visSize;
+        multiDimVis.Rebuild();
+
+        DataPresenter = presenter;
+        VisualizationView = multiDimVis;
+        u2visGeneralController.Instance.AddVis(this);
+        initilized = true;
+    }
+
+    private void InitilizeHeightMap(bool withDefaults)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void InitilizeBarChart3D(bool withDefaults)
+    {
+        MultiDimDataPresenter presenter = gameObject.GetComponent<MultiDimDataPresenter>();
+        BarChart3D barChart = gameObject.GetComponent<BarChart3D>();
+        if (!withDefaults)
+        {
+            if (_axisInformation.Length != 3)
+            {
+                Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 3.");
+                throw new Exception("Wrong amount of AxisInformation.");
+            }
+            List<int> dimIndices = new List<int>();
+            dimIndices.Add(_axisInformation[1].DimensionIndex);
+            dimIndices.Add(_axisInformation[2].DimensionIndex);
+            dimIndices.AddRange(_indicesOfMultiDimensionDataDimensions);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _axisInformation[0].DimensionIndex,dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            presenter.SetAxisPresenters(axisPresenter);
             //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
             if (_barChartMesh == null)
             {
@@ -397,12 +448,12 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         else
         {
             List<int> dimIndices = new List<int>();
-            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[0]);
-            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[1]);
-            Debug.Log(_dataProvider.gameObject.name);
-            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            dimIndices.Add(_axisInformation[1].DimensionIndex);
+            dimIndices.Add(_axisInformation[2].DimensionIndex);
+            dimIndices.AddRange(_indicesOfMultiDimensionDataDimensions);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _axisInformation[0].DimensionIndex, dimIndices.ToArray());
             presenter.ResetAxisProperties();
-            _axisInformation = new AxisInformationStruct[2];
+            _axisInformation = new AxisInformationStruct[3];
             for (int i = 0; i < _axisInformation.Length; i++)
             {
                 _axisInformation[i] = new AxisInformationStruct(
@@ -416,6 +467,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                     u2visGeneralController.Instance.DefaultLabelDecimalPlaces);
             }
             AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            Debug.Log(axisPresenter.Length);
             for (int i = 0; i < axisPresenter.Length; i++)
             {
                 axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
@@ -424,8 +476,9 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                 axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
                 axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
             }
+            presenter.SetAxisPresenters(axisPresenter);
             //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
-            _barChartMesh = u2visGeneralController.Instance.Default2DBarChartMesh;
+            _barChartMesh = u2visGeneralController.Instance.Default3DBarChartMesh;
             _3DBarThickness = u2visGeneralController.Instance.Default3DBarThickness;
         }
         barChart.Initialize(presenter, _axisInformation[0].AxisPrefab, _style, _barChartMesh);
@@ -472,6 +525,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                 axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
                 axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
             }
+            presenter.SetAxisPresenters(axisPresenter);
             //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
             if (_barChartMesh == null)
             {
@@ -512,6 +566,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                 axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
                 axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
             }
+            presenter.SetAxisPresenters(axisPresenter);
             //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
             _barChartMesh = u2visGeneralController.Instance.Default2DBarChartMesh;
             _2DBarThickness = u2visGeneralController.Instance.Default2DBarThickness;
@@ -550,11 +605,14 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
     public void SetBarChart3DValues(Vector2 barThickness, Mesh barChart3DMesh)
     {
-        if (_visType == VisType.BarChart2D)
+        if (_visType == VisType.BarChart3D)
         {
             _3DBarThickness = barThickness;
             _barChartMesh = barChart3DMesh;
-            UpdateContentMeshes();
+            if (initilized)
+                UpdateContentMeshes();
+            else
+                Debug.Log("You still need to initilize the vis");
         }
         else
         {
@@ -615,6 +673,60 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
     #endregion
 
+    #region utils
+    private void InitilizeSwitcher(bool initWithDefaults)
+    {
+        switch (_visType)
+        {
+            case VisType.BarChart2D:
+                InitilizeBarChart2D(initWithDefaults);
+                break;
+            case VisType.BarChart3D:
+                if (initWithDefaults)
+                    _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeBarChart3D(initWithDefaults);
+                break;
+            case VisType.HeightMap:
+                if (initWithDefaults)
+                    _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeDefaultMultiDim(initWithDefaults);
+                break;
+            case VisType.LineChart2D:
+                if (initWithDefaults)
+                    _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeDefaultMultiDim(initWithDefaults);
+                break;
+            case VisType.LineChart3D:
+                if (initWithDefaults)
+                    _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeDefaultMultiDim(initWithDefaults);
+                break;
+            case VisType.ParallelCoordinates:
+                InitilizeParallelCoordinates(initWithDefaults);
+                break;
+            case VisType.PieChart2D:
+                if (initWithDefaults)
+                    _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeDefaultMultiDim(initWithDefaults);
+                break;
+            case VisType.PieChart3D:
+                if (initWithDefaults)
+                    _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
+                InitilizeDefaultMultiDim(initWithDefaults);
+                break;
+            case VisType.RevolvedCharts:
+                InitilizeRevolvedCharts(initWithDefaults);
+                break;
+            case VisType.Scatterplot:
+                InitilizeScatterplot(initWithDefaults);
+                break;
+            case VisType.StackedBar:
+                InitilizeStackedBar(initWithDefaults);
+                break;
+        }
+    }
+    #endregion
+
     #region updates
     public void UpdateCompleteVis()
     {
@@ -626,42 +738,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         //@TODO update functionality based on contents of private fields
 
         //workaround. Does Update complete vis, might not be efficient. Might need to be updated.
-        switch (_visType)
-        {
-            case VisType.BarChart2D:
-                InitilizeBarChart2D(false);
-                break;
-            case VisType.BarChart3D:
-                InitilizeBarChart3D(false);
-                break;
-            case VisType.HeightMap:
-                InitilizeHeightMap(false);
-                break;
-            case VisType.LineChart2D:
-                InitilizeLineChart2D(false);
-                break;
-            case VisType.LineChart3D:
-                InitilizeLineChart3D(false);
-                break;
-            case VisType.ParallelCoordinates:
-                InitilizeParallelCoordinates(false);
-                break;
-            case VisType.PieChart2D:
-                InitilizePieChart2D(false);
-                break;
-            case VisType.PieChart3D:
-                InitilizePieChart3D(false);
-                break;
-            case VisType.RevolvedCharts:
-                InitilizeRevolvedCharts(false);
-                break;
-            case VisType.Scatterplot:
-                InitilizeScatterplot(false);
-                break;
-            case VisType.StackedBar:
-                InitilizeStackedBar(false);
-                break;
-        }
+        InitilizeSwitcher(false);
     }
 
     public void UpdateAxes()
