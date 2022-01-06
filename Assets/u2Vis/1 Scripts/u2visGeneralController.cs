@@ -261,7 +261,7 @@ public class u2visGeneralController : MonoBehaviour
     /// <param name="parent">the designated parent of the visualization</param>
     /// <param name="creatorName">the name of the creator</param>
     /// <returns></returns>
-    public GeneralVisulizationWrapper CreateVisByType(VisType type, Transform parent, string creatorName)
+    public GeneralVisulizationWrapper CreateVisByType(VisType type,AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string creatorName)
     {
         GameObject visObject = null;
         switch (type)
@@ -270,78 +270,131 @@ public class u2visGeneralController : MonoBehaviour
                 foreach(var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is BarChart2D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        BarChart2DWrapper wrapper = visObject.AddComponent<BarChart2DWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.BarChart3D:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is BarChart3D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        BarChart3DWrapper wrapper = visObject.AddComponent<BarChart3DWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.HeightMap:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is Heightmap)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        HeightMapWrapper wrapper = visObject.AddComponent<HeightMapWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.LineChart2D:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is LineChart2D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        LineChart2DWrapper wrapper = visObject.AddComponent<LineChart2DWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.LineChart3D:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is LineChart3D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        LineChart3DWrapper wrapper = visObject.AddComponent<LineChart3DWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
+                        
                 }
                 break;
             case VisType.ParallelCoordinates:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is ParallelCoordinates)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        ParallelCoordinatesWrapper wrapper = visObject.AddComponent<ParallelCoordinatesWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.PieChart2D:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is PieChart2D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        PieChart2DWrapper wrapper = visObject.AddComponent<PieChart2DWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.PieChart3D:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is PieChart3D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        PieChart3DWrapper wrapper = visObject.AddComponent<PieChart3DWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             case VisType.Scatterplot:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is Scatterplot2D)
+                    {
                         visObject = GameObject.Instantiate(prefab, parent, false);
+                        ScatterplotWrapper wrapper = visObject.AddComponent<ScatterplotWrapper>();
+                        visObject.transform.localPosition = Vector3.zero;
+                        wrapper.Create(dataProvider, dimIndices, creatorName);
+                        return wrapper;
+                    }
                 }
                 break;
             default:
-                visObject = GameObject.Instantiate(_defaultVisPrefabs[0], parent, false);
-                break;
+                return null;
+                
         }
         if (visObject == null)
         {
             Debug.LogError("Did not find default prefab for given type");
             throw new System.Exception("Did not find default prefab for given type");
         }
-        visObject.transform.localPosition = Vector3.zero;
-        GeneralVisulizationWrapper wrapper = visObject.AddComponent<GeneralVisulizationWrapper>();
-        wrapper.Create(type,creatorName);
-        return wrapper;
+        return null;
+
     }
     /// <summary>
     ///Creates a Group of visualizations which will be stored by group name in a dict.
