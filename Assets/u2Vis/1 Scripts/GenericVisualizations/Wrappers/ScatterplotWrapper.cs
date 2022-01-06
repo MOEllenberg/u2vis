@@ -123,23 +123,17 @@ public class ScatterplotWrapper : GeneralVisulizationWrapper
     }
     public void SetScatterplotValues(Vector3 minZoomLevel, Vector3 maxZoomLevel, bool displayRelativeValues)
     {
-        if (_visType == VisType.Scatterplot)
+        _displayRelativeValues = displayRelativeValues;
+        _minZoomLevel = minZoomLevel;
+        _maxZoomLevel = maxZoomLevel;
+        if (initilized)
         {
-            _displayRelativeValues = displayRelativeValues;
-            _minZoomLevel = minZoomLevel;
-            _maxZoomLevel = maxZoomLevel;
-            if (initilized)
-            {
-                UpdateContentMeshes();
-            }
-            else
-            {
-                Debug.Log("You still need to initilize the vis");
-            }
+            UpdateContentMeshes();
         }
         else
         {
-            Debug.LogError("This is not a Scatterplot");
+            Debug.Log("You still need to initilize the vis");
         }
+
     }
 }

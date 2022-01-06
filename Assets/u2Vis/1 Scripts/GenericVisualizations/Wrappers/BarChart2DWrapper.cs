@@ -114,20 +114,13 @@ public class BarChart2DWrapper : GeneralVisulizationWrapper
     /// <param name="barChart2DMesh"></param>
     public void SetBarChart2DValues(float barThickness, Mesh barChart2DMesh)
     {
-        if (_visType == VisType.BarChart2D)
-        {
-            _2DBarThickness = barThickness;
-            _barChartMesh = barChart2DMesh;
-            if (initilized)
-                UpdateContentMeshes();
-            else
-                Debug.Log("You still need to initilize the vis");
-        }
+
+        _2DBarThickness = barThickness;
+        _barChartMesh = barChart2DMesh;
+        if (initilized)
+            UpdateContentMeshes();
         else
-        {
-            Debug.LogError("this is not a 2D Barchart");
-            return;
-        }
+            Debug.Log("You still need to initilize the vis");
     }
 
     public override void UpdateAxes()

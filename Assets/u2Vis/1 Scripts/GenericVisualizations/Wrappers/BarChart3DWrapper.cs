@@ -121,19 +121,11 @@ public class BarChart3DWrapper : GeneralVisulizationWrapper
     /// <param name="barChart3DMesh"></param>
     public void SetBarChart3DValues(Vector2 barThickness, Mesh barChart3DMesh)
     {
-        if (_visType == VisType.BarChart3D)
-        {
-            _3DBarThickness = barThickness;
-            _barChartMesh = barChart3DMesh;
-            if (initilized)
-                UpdateContentMeshes();
-            else
-                Debug.Log("You still need to initilize the vis");
-        }
+        _3DBarThickness = barThickness;
+        _barChartMesh = barChart3DMesh;
+        if (initilized)
+            UpdateContentMeshes();
         else
-        {
-            Debug.LogError("this is not a 3D Barchart");
-            return;
-        }
+            Debug.Log("You still need to initilize the vis");
     }
 }
