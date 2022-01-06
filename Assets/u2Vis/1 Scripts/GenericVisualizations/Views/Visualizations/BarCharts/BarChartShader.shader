@@ -1,5 +1,6 @@
 ﻿Shader "AugDisp/InfoVis/BarChartShader"
 {
+    
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
@@ -10,7 +11,8 @@
         Tags { "RenderType"="Opaque" }
         LOD 200
 		Cull Off
-
+        ZWrite On
+        ZTest LEqual
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
         #pragma surface surf Standard fullforwardshadows

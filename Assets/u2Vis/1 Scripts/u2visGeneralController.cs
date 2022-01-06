@@ -32,9 +32,9 @@ public class u2visGeneralController : MonoBehaviour
         ParallelCoordinates,
         PieChart2D,
         PieChart3D,
-        RevolvedCharts,
+        //RevolvedCharts,
         Scatterplot,
-        StackedBar
+        //StackedBar
     }
     /// <summary>
     /// List of the default visualization prefabs.
@@ -132,6 +132,15 @@ public class u2visGeneralController : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Vector2 _default3DBarThickness = Vector2.one;
+
+    [SerializeField]
+    private Vector3 _minZoomLevel = Vector3.zero;
+
+    [SerializeField]
+    private Vector3 _maxZoomLevel = Vector3.one;
+
+    [SerializeField]
+    private bool _displayRelativeValues = true;
     /// <summary>
     /// Dict for all vis wrappers with the id as key.
     /// </summary>
@@ -221,6 +230,10 @@ public class u2visGeneralController : MonoBehaviour
     /// The Property for the default  indices for multiple dimensions for <see cref="MultiDimDataPresenter"/>
     /// </summary>
     public int[] DefaultMultiDimIndices { get => _defaultMultiDimIndices; set => _defaultMultiDimIndices = value; }
+    public Vector2 Default3DBarThickness1 { get => _default3DBarThickness; set => _default3DBarThickness = value; }
+    public Vector3 MinZoomLevel { get => _minZoomLevel; set => _minZoomLevel = value; }
+    public Vector3 MaxZoomLevel { get => _maxZoomLevel; set => _maxZoomLevel = value; }
+    public bool DisplayRelativeValues { get => _displayRelativeValues; set => _displayRelativeValues = value; }
 
     /// <summary>
     /// Adds a viswrapper to the dict.
@@ -309,24 +322,10 @@ public class u2visGeneralController : MonoBehaviour
                         visObject = GameObject.Instantiate(prefab, parent, false);
                 }
                 break;
-            case VisType.RevolvedCharts:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is RevolvedCharts)
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                }
-                break;
             case VisType.Scatterplot:
                 foreach (var prefab in _defaultVisPrefabs)
                 {
                     if (prefab.GetComponent<BaseVisualizationView>() is Scatterplot2D)
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                }
-                break;
-            case VisType.StackedBar:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is BarChart2D)
                         visObject = GameObject.Instantiate(prefab, parent, false);
                 }
                 break;

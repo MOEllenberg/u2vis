@@ -32,6 +32,7 @@ namespace u2vis
         public bool DisplayRelativeValues
         {
             get { return _displayRelativeValues; }
+            set { _displayRelativeValues = value; RebuildVisualization(); }
         }
         #endregion
 
@@ -41,6 +42,11 @@ namespace u2vis
             base.SetupInitialAxisViews();
             if (_presenter.NumberOfDimensions < 3)
                 return;
+            SetupZAxis();
+        }
+
+        protected void SetupZAxis()
+        {
             var vZ = Instantiate(_axisViewPrefab, transform, false);
             vZ.AxisPresenter = _presenter.AxisPresenters[2];
             vZ.Length = _size.z;

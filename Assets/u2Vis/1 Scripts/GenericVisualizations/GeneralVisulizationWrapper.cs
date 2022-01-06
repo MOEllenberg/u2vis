@@ -133,6 +133,15 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Vector2? _3DBarThickness = null;
+
+    [SerializeField]
+    private Vector3? _minZoomLevel = null;
+
+    [SerializeField]
+    private Vector3? _maxZoomLevel = null;
+
+    [SerializeField]
+    private bool? _displayRelativeValues = null;
     #endregion
 
     #region public properties
@@ -253,7 +262,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
 
         _visSize = u2visGeneralController.Instance.DefaultSize;
-        _dataProvider = u2visGeneralController.Instance.DefaultDataprovider;
+        _dataProvider = u2visGeneralController.Instance.DefaultDataprovider; // Dataprovider hat kein default.
         _selectedMaxItem = u2visGeneralController.Instance.DefaultMaxItem;
         _selectedMinItem = u2visGeneralController.Instance.DefaultMinItem;
         _style = u2visGeneralController.Instance.DefaultStyle;
@@ -273,17 +282,173 @@ public class GeneralVisulizationWrapper : MonoBehaviour
 
     private void InitilizeScatterplot(bool withDefaults)
     {
-        throw new NotImplementedException();
-    }
+        GenericDataPresenter presenter = gameObject.GetComponent<GenericDataPresenter>();
+        Scatterplot2D scatterplot = gameObject.GetComponent<Scatterplot2D>();
+        if (presenter is MultiDimDataPresenter)
+        {
+            Debug.LogError($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+            throw new Exception($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+        }
+        if (!withDefaults)
+        {
+            if (!(_axisInformation.Length == 2||_axisInformation.Length==3))
+            {
+                Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 2 or 3.");
+                throw new Exception("Wrong amount of AxisInformation.");
+            }
+            List<int> dimIndices = new List<int>();
+            foreach (var information in _axisInformation)
+            {
+                dimIndices.Add(information.DimensionIndex);
+            }
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            presenter.SetAxisPresenters(axisPresenter);
+            //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
+            if (_minZoomLevel == null)
+            {
+                _minZoomLevel = u2visGeneralController.Instance.MinZoomLevel;
+            }
+            if (_maxZoomLevel == null)
+            {
+                _maxZoomLevel = u2visGeneralController.Instance.MaxZoomLevel;
+            }
+            if (_displayRelativeValues == null)
+            {
+                _displayRelativeValues = u2visGeneralController.Instance.DisplayRelativeValues;
+            }
+        }
+        else
+        {
+            List<int> dimIndices = new List<int>();
+            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[0]);
+            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[1]);
+            Debug.Log(_dataProvider.gameObject.name);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            _axisInformation = new AxisInformationStruct[2];
+            for (int i = 0; i < _axisInformation.Length; i++)
+            {
+                _axisInformation[i] = new AxisInformationStruct(
+                    u2visGeneralController.Instance.DefaultDimensionIndices[i],
+                    u2visGeneralController.Instance.DefaultCategoricalFlag,
+                    u2visGeneralController.Instance.DefaultShowAxisFlag,
+                    u2visGeneralController.Instance.DefaultAxisPrefab,
+                    u2visGeneralController.Instance.DefaultNumberOfTicks,
+                    u2visGeneralController.Instance.DefaultLabelIntervall,
+                    u2visGeneralController.Instance.DefaultLabelOrientation,
+                    u2visGeneralController.Instance.DefaultLabelDecimalPlaces);
+            }
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            presenter.SetAxisPresenters(axisPresenter);
+            //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
+            _minZoomLevel = u2visGeneralController.Instance.MinZoomLevel;
+            _maxZoomLevel = u2visGeneralController.Instance.MaxZoomLevel;
+            _displayRelativeValues = u2visGeneralController.Instance.DisplayRelativeValues;
+        }
+        scatterplot.Size = _visSize;
+        scatterplot.Initialize(presenter, _axisInformation[0].AxisPrefab, _style);
+        scatterplot.ZoomMin = (Vector3)_minZoomLevel;
+        scatterplot.ZoomMax = (Vector3)_maxZoomLevel;
+        scatterplot.DisplayRelativeValues = (bool)_displayRelativeValues;
+        scatterplot.ShowAxes = _axisInformation[0].ShowAxis;
+        scatterplot.Rebuild();
 
-    private void InitilizeRevolvedCharts(bool withDefaults)
-    {
-        throw new NotImplementedException();
+        DataPresenter = presenter;
+        VisualizationView = scatterplot;
+        initilized = true;
     }
 
     private void InitilizeParallelCoordinates(bool withDefaults)
     {
-        throw new NotImplementedException();
+        GenericDataPresenter presenter = gameObject.GetComponent<GenericDataPresenter>();
+        ParallelCoordinates parallelCoordinates = gameObject.GetComponent<ParallelCoordinates>();
+        if (presenter is MultiDimDataPresenter)
+        {
+            Debug.LogError($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+            throw new Exception($"this vis uses a Generic Data Presenter instead of {presenter.GetType().Name}");
+        }
+        if (!withDefaults)
+        {
+            List<int> dimIndices = new List<int>();
+            foreach (var information in _axisInformation)
+            {
+                dimIndices.Add(information.DimensionIndex);
+            }
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            presenter.SetAxisPresenters(axisPresenter);
+            //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
+        }
+        else
+        {
+            List<int> dimIndices = new List<int>();
+            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[0]);
+            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[1]);
+            Debug.Log(_dataProvider.gameObject.name);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.ResetAxisProperties();
+            _axisInformation = new AxisInformationStruct[2];
+            for (int i = 0; i < _axisInformation.Length; i++)
+            {
+                _axisInformation[i] = new AxisInformationStruct(
+                    u2visGeneralController.Instance.DefaultDimensionIndices[i],
+                    u2visGeneralController.Instance.DefaultCategoricalFlag,
+                    u2visGeneralController.Instance.DefaultShowAxisFlag,
+                    u2visGeneralController.Instance.DefaultAxisPrefab,
+                    u2visGeneralController.Instance.DefaultNumberOfTicks,
+                    u2visGeneralController.Instance.DefaultLabelIntervall,
+                    u2visGeneralController.Instance.DefaultLabelOrientation,
+                    u2visGeneralController.Instance.DefaultLabelDecimalPlaces);
+            }
+            AxisPresenter[] axisPresenter = presenter.AxisPresenters;
+            for (int i = 0; i < axisPresenter.Length; i++)
+            {
+                axisPresenter[i].IsCategorical = _axisInformation[i].IsCategorigal;
+                axisPresenter[i].LabelOrientation = _axisInformation[i].LabelOrientation;
+                axisPresenter[i].LabelTickIntervall = _axisInformation[i].LabelInterval;
+                axisPresenter[i].TickIntervall = 1f / (float)_axisInformation[i].NumberOfTicks;
+                axisPresenter[i].DecimalPlaces = _axisInformation[i].DecimalPlacesOfLabels;
+            }
+            presenter.SetAxisPresenters(axisPresenter);
+            //TODO: Axisview Prefab and show axis should be in DataPresenter, not in vis view, and there defined per axispresenter. Untill done, values of first axis information are used
+            _barChartMesh = u2visGeneralController.Instance.Default2DBarChartMesh;
+            _2DBarThickness = u2visGeneralController.Instance.Default2DBarThickness;
+        }
+        parallelCoordinates.Initialize(presenter, _axisInformation[0].AxisPrefab, _style);
+        parallelCoordinates.ShowAxes = _axisInformation[0].ShowAxis;
+        parallelCoordinates.Size = _visSize;
+        parallelCoordinates.Rebuild();
+
+        DataPresenter = presenter;
+        VisualizationView = parallelCoordinates;
+        initilized = true;
     }
 
     private void InitilizeDefaultMultiDim(bool withDefaults)
@@ -561,6 +726,28 @@ public class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region setters for vis specific values
+    public void SetScatterplotValues(Vector3 minZoomLevel, Vector3 maxZoomLevel, bool displayRelativeValues)
+    {
+        if (_visType == VisType.Scatterplot)
+        {
+            _displayRelativeValues = displayRelativeValues;
+            _minZoomLevel = minZoomLevel;
+            _maxZoomLevel = maxZoomLevel;
+            if (initilized)
+            {
+                UpdateContentMeshes();
+            }
+            else
+            {
+                Debug.Log("You still need to initilize the vis");
+            }
+        }
+        else
+        {
+            Debug.LogError("This is not a Scatterplot");
+        }
+    }
+    
     /// <summary>
     /// Sets the BarChart2D specific values.
     /// </summary>
@@ -647,6 +834,7 @@ public class GeneralVisulizationWrapper : MonoBehaviour
         }
         AxisInformationStruct oldInfo = _axisInformation[axisIndex];
         int newAxisDim = dimensionIndexToBe != null ? (int)dimensionIndexToBe : oldInfo.DimensionIndex;
+        int newAxisDim2 = dimensionIndexToBe ?? oldInfo.DimensionIndex;
         bool newCategorical = isCategorical != null ? (bool)isCategorical : oldInfo.IsCategorigal;
         bool newShowAxis = showAxis != null ? (bool)showAxis : oldInfo.ShowAxis;
         GenericAxisView newAxisPrefab = axisPrefab != null ? axisPrefab : oldInfo.AxisPrefab;
@@ -715,14 +903,8 @@ public class GeneralVisulizationWrapper : MonoBehaviour
                     _indicesOfMultiDimensionDataDimensions = u2visGeneralController.Instance.DefaultMultiDimIndices;
                 InitilizeDefaultMultiDim(initWithDefaults);
                 break;
-            case VisType.RevolvedCharts:
-                InitilizeRevolvedCharts(initWithDefaults);
-                break;
             case VisType.Scatterplot:
                 InitilizeScatterplot(initWithDefaults);
-                break;
-            case VisType.StackedBar:
-                InitilizeStackedBar(initWithDefaults);
                 break;
         }
     }
