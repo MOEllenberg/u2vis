@@ -41,11 +41,14 @@ public class BarChart3DWrapper : GeneralVisulizationWrapper
                 Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 3.");
                 throw new Exception("Wrong amount of AxisInformation.");
             }
-            List<int> dimIndices = new List<int>();
-            dimIndices.Add(_axisInformation[1].DimensionIndex);
-            dimIndices.Add(_axisInformation[2].DimensionIndex);
-            dimIndices.AddRange(_indicesOfMultiDimensionDataDimensions);
-            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _axisInformation[0].DimensionIndex, dimIndices.ToArray());
+            List<int> dimIndicesCompund = new List<int>();
+            for (int i = 0; i < _dimIndices.Length; i++)
+            {
+                if (i != 0)
+                    dimIndicesCompund.Add(_dimIndices[i]);
+            }
+            dimIndicesCompund.AddRange(_indicesOfMultiDimensionDataDimensions);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _dimIndices[0], dimIndicesCompund.ToArray());
             presenter.ResetAxisProperties();
             AxisPresenter[] axisPresenter = presenter.AxisPresenters;
             for (int i = 0; i < axisPresenter.Length; i++)
@@ -69,17 +72,19 @@ public class BarChart3DWrapper : GeneralVisulizationWrapper
         }
         else
         {
-            List<int> dimIndices = new List<int>();
-            dimIndices.Add(_axisInformation[1].DimensionIndex);
-            dimIndices.Add(_axisInformation[2].DimensionIndex);
-            dimIndices.AddRange(_indicesOfMultiDimensionDataDimensions);
-            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _axisInformation[0].DimensionIndex, dimIndices.ToArray());
+            List<int> dimIndicesCompund = new List<int>();
+            for (int i = 0; i < _dimIndices.Length; i++)
+            {
+                if (i != 0)
+                    dimIndicesCompund.Add(_dimIndices[i]);
+            }
+            dimIndicesCompund.AddRange(_indicesOfMultiDimensionDataDimensions);
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _dimIndices[0], dimIndicesCompund.ToArray());
             presenter.ResetAxisProperties();
             _axisInformation = new AxisInformationStruct[3];
             for (int i = 0; i < _axisInformation.Length; i++)
             {
                 _axisInformation[i] = new AxisInformationStruct(
-                    u2visGeneralController.Instance.DefaultDimensionIndices[i],
                     u2visGeneralController.Instance.DefaultCategoricalFlag,
                     u2visGeneralController.Instance.DefaultShowAxisFlag,
                     u2visGeneralController.Instance.DefaultAxisPrefab,

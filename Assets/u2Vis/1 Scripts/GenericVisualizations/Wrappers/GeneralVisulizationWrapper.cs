@@ -14,10 +14,6 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     /// </summary>
     public struct AxisInformationStruct{
         /// <summary>
-        /// The index the dimension has in the dataset.
-        /// </summary>
-        public int DimensionIndex { get; private set; }
-        /// <summary>
         /// flags if the dimension is categorical or not
         /// </summary>
         public bool IsCategorigal { get; private set; }
@@ -45,9 +41,8 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
         /// Decimal places of the label. Will be round to the defined number of decimal places.
         /// </summary>
         public int DecimalPlacesOfLabels { get; private set; }
-        public AxisInformationStruct(int dimensionIndex, bool isCategorigal, bool showAxis, GenericAxisView axisPrefab, int numberOfTicks, int labelInterval, LabelOrientation labelOrientation, int decimalPlacesOfLabels)
+        public AxisInformationStruct(bool isCategorigal, bool showAxis, GenericAxisView axisPrefab, int numberOfTicks, int labelInterval, LabelOrientation labelOrientation, int decimalPlacesOfLabels)
         {
-            DimensionIndex = dimensionIndex;
             IsCategorigal = isCategorigal;
             ShowAxis = showAxis;
             AxisPrefab = axisPrefab;
@@ -291,7 +286,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     /// <param name="labelInterval"></param>
     /// <param name="labelOrientation"></param>
     /// <param name="decimalPlacesOfLabels"></param>
-    public void SetAxisValuesByAxisIndex(int axisIndex, int? dimensionIndexToBe = null, bool? isCategorical =null, bool? showAxis = null, GenericAxisView axisPrefab=null,int? numberOfTicks=null,int? labelInterval=null, LabelOrientation? labelOrientation=null,int? decimalPlacesOfLabels=null)
+    public void SetAxisValuesByAxisIndex(int axisIndex, bool? isCategorical =null, bool? showAxis = null, GenericAxisView axisPrefab=null,int? numberOfTicks=null,int? labelInterval=null, LabelOrientation? labelOrientation=null,int? decimalPlacesOfLabels=null)
     {
         if (axisIndex >= _axisInformation.Length - 1)
         {
@@ -299,8 +294,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
             return;
         }
         AxisInformationStruct oldInfo = _axisInformation[axisIndex];
-        int newAxisDim = dimensionIndexToBe != null ? (int)dimensionIndexToBe : oldInfo.DimensionIndex;
-        int newAxisDim2 = dimensionIndexToBe ?? oldInfo.DimensionIndex;
+       // int newAxisDim2 = dimensionIndexToBe ?? oldInfo.DimensionIndex;
         bool newCategorical = isCategorical != null ? (bool)isCategorical : oldInfo.IsCategorigal;
         bool newShowAxis = showAxis != null ? (bool)showAxis : oldInfo.ShowAxis;
         GenericAxisView newAxisPrefab = axisPrefab != null ? axisPrefab : oldInfo.AxisPrefab;
@@ -310,7 +304,6 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
         int newDecimalPlaces = decimalPlacesOfLabels != null ? (int)decimalPlacesOfLabels : oldInfo.DecimalPlacesOfLabels;
 
         AxisInformation[axisIndex] = new AxisInformationStruct(
-            dimensionIndex: newAxisDim, 
             isCategorigal: newCategorical, 
             showAxis: newShowAxis,
             axisPrefab: newAxisPrefab,

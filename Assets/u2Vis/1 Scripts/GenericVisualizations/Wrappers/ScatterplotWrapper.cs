@@ -42,12 +42,8 @@ public class ScatterplotWrapper : GeneralVisulizationWrapper
                 Debug.LogError($"Wrong amount of AxisInformation. {_axisInformation.Length} are given but needed are 2 or 3.");
                 throw new Exception("Wrong amount of AxisInformation.");
             }
-            List<int> dimIndices = new List<int>();
-            foreach (var information in _axisInformation)
-            {
-                dimIndices.Add(information.DimensionIndex);
-            }
-            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _dimIndices);
             presenter.ResetAxisProperties();
             AxisPresenter[] axisPresenter = presenter.AxisPresenters;
             for (int i = 0; i < axisPresenter.Length; i++)
@@ -75,17 +71,12 @@ public class ScatterplotWrapper : GeneralVisulizationWrapper
         }
         else
         {
-            List<int> dimIndices = new List<int>();
-            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[0]);
-            dimIndices.Add(u2visGeneralController.Instance.DefaultDimensionIndices[1]);
-            Debug.Log(_dataProvider.gameObject.name);
-            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, dimIndices.ToArray());
+            presenter.Initialize(_dataProvider, _selectedMinItem, _selectedMaxItem, _dimIndices);
             presenter.ResetAxisProperties();
             _axisInformation = new AxisInformationStruct[2];
             for (int i = 0; i < _axisInformation.Length; i++)
             {
                 _axisInformation[i] = new AxisInformationStruct(
-                    u2visGeneralController.Instance.DefaultDimensionIndices[i],
                     u2visGeneralController.Instance.DefaultCategoricalFlag,
                     u2visGeneralController.Instance.DefaultShowAxisFlag,
                     u2visGeneralController.Instance.DefaultAxisPrefab,

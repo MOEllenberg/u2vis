@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using u2vis;
 using UnityEngine;
 using static GeneralVisulizationWrapper;
+using static u2visGeneralController;
 
 public class WrapperTester : MonoBehaviour
 {
@@ -24,16 +25,20 @@ public class WrapperTester : MonoBehaviour
     [ContextMenu("Test!")]
     public void Test()
     {
-        GeneralVisulizationWrapper wrapper = u2visGeneralController.Instance.CreateVisByType(visToTest, dataProvider,new int[] { 0, 1, 2 },parentToBe, "Testing");
+        GeneralVisulizationWrapper wrapper;
+        if (!(visToTest==VisType.BarChart2D||visToTest==VisType.LineChart2D))
+            wrapper = u2visGeneralController.Instance.CreateVisByType(visToTest, dataProvider,new int[] { 0, 1, 2 },parentToBe, "Testing");
+        else
+            wrapper = u2visGeneralController.Instance.CreateVisByType(visToTest, dataProvider, new int[] { 0, 1}, parentToBe, "Testing");
 
         AxisInformationStruct[] axisInformationStructs = new AxisInformationStruct[2];
-        axisInformationStructs[0] = new AxisInformationStruct(0, true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
-        axisInformationStructs[1] = new AxisInformationStruct(1, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs[0] = new AxisInformationStruct(true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs[1] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
 
         AxisInformationStruct[] axisInformationStructs3D = new AxisInformationStruct[3];
-        axisInformationStructs3D[0] = new AxisInformationStruct(0, true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
-        axisInformationStructs3D[1] = new AxisInformationStruct(1, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
-        axisInformationStructs3D[2] = new AxisInformationStruct(1, false, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs3D[0] = new AxisInformationStruct(true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs3D[1] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+        axisInformationStructs3D[2] = new AxisInformationStruct(false, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
 
         int[] multidim = { 0, 1, 2, 3 };
 
@@ -95,10 +100,9 @@ public class WrapperTester : MonoBehaviour
                 break;
             case u2visGeneralController.VisType.ParallelCoordinates:
                 AxisInformationStruct[] axisInformationStructPC = new AxisInformationStruct[4];
-                axisInformationStructPC[0] = new AxisInformationStruct(0, true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
-                axisInformationStructPC[1] = new AxisInformationStruct(1, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
-                axisInformationStructPC[2] = new AxisInformationStruct(2, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
-                axisInformationStructPC[3] = new AxisInformationStruct(3, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+                axisInformationStructPC[0] = new AxisInformationStruct(true, true, axisPrefab, 4, 1, LabelOrientation.Diagonal, 1);
+                axisInformationStructPC[1] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+                axisInformationStructPC[2] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
 
                 wrapper.Initilize(
                     size: new Vector3(2, 1, 1), 
@@ -132,9 +136,9 @@ public class WrapperTester : MonoBehaviour
                 ScatterplotWrapper wrapperSC = wrapper as ScatterplotWrapper;
                 wrapperSC.SetScatterplotValues(Vector3.zero, Vector3.one, true);
                 AxisInformationStruct[] axisInformationStructSP = new AxisInformationStruct[3];
-                axisInformationStructSP[0] = new AxisInformationStruct(1, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
-                axisInformationStructSP[1] = new AxisInformationStruct(2, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
-                axisInformationStructSP[2] = new AxisInformationStruct(3, false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+                axisInformationStructSP[0] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+                axisInformationStructSP[1] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
+                axisInformationStructSP[2] = new AxisInformationStruct(false, true, axisPrefab, 10, 1, LabelOrientation.Diagonal, 1);
                 wrapper.Initilize(
                     size: new Vector3(0.9f, 0.9f, 0.9f),
                     selectedMinItem: 0, 
