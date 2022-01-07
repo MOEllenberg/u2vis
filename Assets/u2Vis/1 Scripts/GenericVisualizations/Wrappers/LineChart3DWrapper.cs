@@ -22,7 +22,6 @@ public class LineChart3DWrapper : GeneralVisulizationWrapper
         _visType = VisType.LineChart3D;
         MultiDimDataPresenter presenter = gameObject.GetComponent<MultiDimDataPresenter>();
         LineChart3D lineChart3D = gameObject.GetComponent<LineChart3D>();
-        _visSize = new Vector3(_visSize.x, _visSize.y, 0.2f); //TODO: Here the size does not scale the axis problem comes back. ave to fix that later.
         if (!withDefaults)
         {
             if (_axisInformation.Length != 3)

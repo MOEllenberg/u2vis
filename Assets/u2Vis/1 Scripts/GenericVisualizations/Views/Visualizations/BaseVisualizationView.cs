@@ -299,6 +299,7 @@ namespace u2vis
             // next time update is called. 
             if (!_lazyRebuild)
                 Rebuild_Internal();
+            SetupInitialAxisViews(); //TODO: This is a workaround, which is not efficient. 
         }
         /// <summary>
         /// Called from the Editor when the presenter has changed.
