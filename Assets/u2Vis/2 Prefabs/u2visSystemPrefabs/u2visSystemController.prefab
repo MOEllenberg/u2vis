@@ -59,7 +59,7 @@ MonoBehaviour:
   _defaultCategoricalFlag: 0
   _defaultLabelOrientation: 1
   _defaultNumberOfTicks: 4
-  _defaultLabelIntervall: 1
+  _defaultLabelInterval: 0
   _defaultLabelDecimalPlaces: 2
   _defaultAxisPrefab: {fileID: 5650031274069596738, guid: dc8563653dd0fe54883b634b92f049db,
     type: 3}
@@ -76,6 +76,15 @@ MonoBehaviour:
     type: 3}
   _default2DBarThickness: 0.2
   _default3DBarThickness: {x: 0.2, y: 0.2}
+  _defaultAreaMaterial: {fileID: 2100000, guid: ec26446fe51ff7f4eb3797aa51ebfa90,
+    type: 2}
+  _defaultLineMaterial: {fileID: 2100000, guid: d6f487d218581404eb0fff68ae0137fa,
+    type: 2}
+  _defaultScatterplotMaterial: {fileID: 2100000, guid: e938c95f4df574e4d9e6cc7ec64a4c45,
+    type: 2}
+  _minZoomLevel: {x: 0, y: 0, z: 0}
+  _maxZoomLevel: {x: 1, y: 1, z: 1}
+  _displayRelativeValues: 1
 --- !u!1 &5378982396253140929
 GameObject:
   m_ObjectHideFlags: 0

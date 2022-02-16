@@ -7,6 +7,17 @@ using static u2visGeneralController;
 
 public class LineChart3DWrapper : GeneralVisulizationWrapper
 {
+    public override GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name)
+    {
+        MultiDimDataPresenter dataPresenter = gameObject.AddComponent<MultiDimDataPresenter>();
+        LineChart3D lineChart3D = gameObject.AddComponent<LineChart3D>();
+        lineChart3D.BindPresenterBeforeInit(dataPresenter);
+        DataPresenter = dataPresenter;
+        GetComponent<MeshRenderer>().material = u2visGeneralController.Instance.DefaultLineMaterial;
+        Create(dataProvider, dimIndices, name);
+        return this;
+    }
+
     public override void UpdateAxes()
     {
         throw new NotImplementedException();
@@ -96,6 +107,7 @@ public class LineChart3DWrapper : GeneralVisulizationWrapper
 
         DataPresenter = presenter;
         VisualizationView = lineChart3D;
+        gameObject.name = $"Linechart 3D by: {CreatorName} | ID: {VisID}";
         initilized = true;
     }
 }

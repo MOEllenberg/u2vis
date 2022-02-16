@@ -19,8 +19,9 @@ public class BarChart2DWrapper : GeneralVisulizationWrapper
     protected float? _2DBarThickness = null;
     protected override void InitilizeVisSpecific(bool withDefaults)
     {
+        Debug.Log("Moini");
         _visType = VisType.BarChart2D;
-        GenericDataPresenter presenter = gameObject.GetComponent<GenericDataPresenter>();
+        GenericDataPresenter presenter = DataPresenter;
         BarChart2D barChart = gameObject.GetComponent<BarChart2D>();
         if (presenter is MultiDimDataPresenter)
         {
@@ -94,9 +95,21 @@ public class BarChart2DWrapper : GeneralVisulizationWrapper
 
         DataPresenter = presenter;
         VisualizationView = barChart;
+        gameObject.name = $"Bar Chart 2D by: {CreatorName} | ID: {VisID}";
         initilized = true;
     }
 
+
+    public override GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name)
+    {
+        GenericDataPresenter dataPresenter = gameObject.AddComponent<GenericDataPresenter>();
+        BarChart2D barChart2D = gameObject.AddComponent<BarChart2D>();
+        barChart2D.BindPresenterBeforeInit(dataPresenter);
+        DataPresenter = dataPresenter;
+        GetComponent<MeshRenderer>().material = u2visGeneralController.Instance.DefaultAreaMaterial;
+        Create(dataProvider, dimIndices, name);
+        return this;
+    }
     /// <summary>
     /// Sets the BarChart2D specific values.
     /// </summary>

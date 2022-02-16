@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace u2vis
-{
+{[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public abstract class BaseVisualizationView : MonoBehaviour
     {
         #region Protected Fields
@@ -311,6 +311,11 @@ namespace u2vis
             Rebuild();
         }
 
+        public virtual void BindPresenterBeforeInit(GenericDataPresenter presenter)
+        {
+            _presenter = presenter;
+            _presenter.DataUpdated += Presenter_DataUpdated;
+        }
         public virtual bool TryGetPosForItemIndex(int itemIndex, out Vector3 pos)
         {
             //pos = Vector3.zero;

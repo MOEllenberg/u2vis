@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using u2vis;
 using UnityEngine;
 
@@ -134,6 +136,15 @@ public class u2visGeneralController : MonoBehaviour
     private Vector2 _default3DBarThickness = Vector2.one;
 
     [SerializeField]
+    private Material _defaultAreaMaterial;
+
+    [SerializeField]
+    private Material _defaultLineMaterial;
+
+    [SerializeField]
+    private Material _defaultScatterplotMaterial;
+
+    [SerializeField]
     private Vector3 _minZoomLevel = Vector3.zero;
 
     [SerializeField]
@@ -234,6 +245,9 @@ public class u2visGeneralController : MonoBehaviour
     public Vector3 MinZoomLevel { get => _minZoomLevel; set => _minZoomLevel = value; }
     public Vector3 MaxZoomLevel { get => _maxZoomLevel; set => _maxZoomLevel = value; }
     public bool DisplayRelativeValues { get => _displayRelativeValues; set => _displayRelativeValues = value; }
+    public Material DefaultAreaMaterial { get => _defaultAreaMaterial; set => _defaultAreaMaterial = value; }
+    public Material DefaultLineMaterial { get => _defaultLineMaterial; set => _defaultLineMaterial = value; }
+    public Material DefaultScatterplotMaterial { get => _defaultScatterplotMaterial; set => _defaultScatterplotMaterial = value; }
 
     /// <summary>
     /// Adds a viswrapper to the dict.
@@ -254,147 +268,13 @@ public class u2visGeneralController : MonoBehaviour
         _visulizations.Remove(id);
     }
 
-    /// <summary>
-    /// Creates an Visualization Object by given type as child of parent. Initialize has to be called on the returned wrapper afterwards. New visualization starts with (0,0,0) as local position.
-    /// </summary>
-    /// <param name="type">Type of the Visualization</param>
-    /// <param name="parent">the designated parent of the visualization</param>
-    /// <param name="creatorName">the name of the creator</param>
-    /// <returns></returns>
-    public GeneralVisulizationWrapper CreateVisByType(VisType type,AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string creatorName)
+    public T CreateVis<T>(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string creatorName) where T: GeneralVisulizationWrapper
     {
-        GameObject visObject = null;
-        switch (type)
-        {
-            case VisType.BarChart2D:
-                foreach(var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is BarChart2D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        BarChart2DWrapper wrapper = visObject.AddComponent<BarChart2DWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.BarChart3D:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is BarChart3D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        BarChart3DWrapper wrapper = visObject.AddComponent<BarChart3DWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.HeightMap:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is Heightmap)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        HeightMapWrapper wrapper = visObject.AddComponent<HeightMapWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.LineChart2D:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is LineChart2D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        LineChart2DWrapper wrapper = visObject.AddComponent<LineChart2DWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.LineChart3D:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is LineChart3D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        LineChart3DWrapper wrapper = visObject.AddComponent<LineChart3DWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                        
-                }
-                break;
-            case VisType.ParallelCoordinates:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is ParallelCoordinates)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        ParallelCoordinatesWrapper wrapper = visObject.AddComponent<ParallelCoordinatesWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.PieChart2D:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is PieChart2D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        PieChart2DWrapper wrapper = visObject.AddComponent<PieChart2DWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.PieChart3D:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is PieChart3D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        PieChart3DWrapper wrapper = visObject.AddComponent<PieChart3DWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            case VisType.Scatterplot:
-                foreach (var prefab in _defaultVisPrefabs)
-                {
-                    if (prefab.GetComponent<BaseVisualizationView>() is Scatterplot2D)
-                    {
-                        visObject = GameObject.Instantiate(prefab, parent, false);
-                        ScatterplotWrapper wrapper = visObject.AddComponent<ScatterplotWrapper>();
-                        visObject.transform.localPosition = Vector3.zero;
-                        wrapper.Create(dataProvider, dimIndices, creatorName);
-                        return wrapper;
-                    }
-                }
-                break;
-            default:
-                return null;
-                
-        }
-        if (visObject == null)
-        {
-            Debug.LogError("Did not find default prefab for given type");
-            throw new System.Exception("Did not find default prefab for given type");
-        }
-        return null;
-
+        GameObject object1 = new GameObject();
+        object1.transform.parent = parent;
+        T wrapper = object1.AddComponent<T>();
+        wrapper.Generate(dataProvider,dimIndices,parent,creatorName);
+        return wrapper;
     }
     /// <summary>
     ///Creates a Group of visualizations which will be stored by group name in a dict.

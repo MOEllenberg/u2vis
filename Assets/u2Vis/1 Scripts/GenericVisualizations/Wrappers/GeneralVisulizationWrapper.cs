@@ -226,6 +226,8 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     }
 
 
+    public abstract GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name);
+
 
     /// <summary>
     /// Initializes the visualization with the default values given in <see cref="u2visGeneralController"/>

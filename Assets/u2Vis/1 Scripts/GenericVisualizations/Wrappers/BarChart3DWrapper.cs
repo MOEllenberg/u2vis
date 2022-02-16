@@ -116,6 +116,7 @@ public class BarChart3DWrapper : GeneralVisulizationWrapper
 
         DataPresenter = presenter;
         VisualizationView = barChart;
+        gameObject.name = $"Bar Chart 3D by: {CreatorName} | ID: {VisID}";
         initilized = true;
     }
 
@@ -132,5 +133,16 @@ public class BarChart3DWrapper : GeneralVisulizationWrapper
             UpdateContentMeshes();
         else
             Debug.Log("You still need to initilize the vis");
+    }
+
+    public override GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name)
+    {
+        MultiDimDataPresenter dataPresenter = gameObject.AddComponent<MultiDimDataPresenter>();
+        BarChart3D barChart = gameObject.AddComponent<BarChart3D>();
+        barChart.BindPresenterBeforeInit(dataPresenter);
+        DataPresenter = dataPresenter;
+        GetComponent<MeshRenderer>().material = u2visGeneralController.Instance.DefaultAreaMaterial;
+        Create(dataProvider, dimIndices, name);
+        return this;
     }
 }

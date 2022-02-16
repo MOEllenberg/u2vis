@@ -7,6 +7,17 @@ using static u2visGeneralController;
 
 public class PieChart3DWrapper : GeneralVisulizationWrapper
 {
+    public override GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name)
+    {
+        MultiDimDataPresenter dataPresenter = gameObject.AddComponent<MultiDimDataPresenter>();
+        PieChart3D pieChart3D = gameObject.AddComponent<PieChart3D>();
+        pieChart3D.BindPresenterBeforeInit(dataPresenter);
+        DataPresenter = dataPresenter;
+        GetComponent<MeshRenderer>().material = u2visGeneralController.Instance.DefaultAreaMaterial;
+        Create(dataProvider, dimIndices, name);
+        return this;
+    }
+
     public override void UpdateAxes()
     {
         throw new NotImplementedException();
@@ -96,6 +107,7 @@ public class PieChart3DWrapper : GeneralVisulizationWrapper
 
         DataPresenter = presenter;
         VisualizationView = pieChart3D;
+        gameObject.name = $"Piechart 3D by: {CreatorName} | ID: {VisID}";
         initilized = true;
     }
 }

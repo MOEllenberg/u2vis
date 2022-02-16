@@ -7,6 +7,17 @@ using static u2visGeneralController;
 
 public class ParallelCoordinatesWrapper : GeneralVisulizationWrapper
 {
+    public override GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name)
+    {
+        GenericDataPresenter dataPresenter = gameObject.AddComponent<GenericDataPresenter>();
+        ParallelCoordinates parallelCoordinates = gameObject.AddComponent<ParallelCoordinates>();
+        parallelCoordinates.BindPresenterBeforeInit(dataPresenter);
+        DataPresenter = dataPresenter;
+        GetComponent<MeshRenderer>().material = u2visGeneralController.Instance.DefaultLineMaterial;
+        Create(dataProvider, dimIndices, name);
+        return this;
+    }
+
     public override void UpdateAxes()
     {
         UpdateCompleteVis();
@@ -81,6 +92,7 @@ public class ParallelCoordinatesWrapper : GeneralVisulizationWrapper
 
         DataPresenter = presenter;
         VisualizationView = parallelCoordinates;
+        gameObject.name = $"Parallel Coordinates by: {CreatorName} | ID: {VisID}";
         initilized = true;
     }
 }

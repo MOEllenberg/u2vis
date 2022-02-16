@@ -110,6 +110,7 @@ public class ScatterplotWrapper : GeneralVisulizationWrapper
 
         DataPresenter = presenter;
         VisualizationView = scatterplot;
+        gameObject.name = $"Scatterplot by: {CreatorName} | ID: {VisID}";
         initilized = true;
     }
     public void SetScatterplotValues(Vector3 minZoomLevel, Vector3 maxZoomLevel, bool displayRelativeValues)
@@ -126,5 +127,16 @@ public class ScatterplotWrapper : GeneralVisulizationWrapper
             Debug.Log("You still need to initilize the vis");
         }
 
+    }
+
+    public override GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name)
+    {
+        GenericDataPresenter dataPresenter = gameObject.AddComponent<GenericDataPresenter>();
+        Scatterplot2D scatterplot = gameObject.AddComponent<Scatterplot2D>();
+        scatterplot.BindPresenterBeforeInit(dataPresenter);
+        DataPresenter = dataPresenter;
+        GetComponent<MeshRenderer>().material = u2visGeneralController.Instance.DefaultScatterplotMaterial;
+        Create(dataProvider, dimIndices, name);
+        return this;
     }
 }

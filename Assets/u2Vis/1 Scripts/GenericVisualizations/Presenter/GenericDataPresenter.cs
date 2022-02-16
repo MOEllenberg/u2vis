@@ -202,6 +202,8 @@ namespace u2vis
             _dataDimensionsIndices = dimensionIndices;
             SetupInitialAxisPresenters();
             _isInitialized = true;
+            _selectedMinItem = minIndex;
+            _selectedMaxItem = maxIndex;
             DataUpdated?.Invoke(this, new DataPresenterEventArgs());
         }
 
