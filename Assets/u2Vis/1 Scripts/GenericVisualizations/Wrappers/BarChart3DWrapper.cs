@@ -110,7 +110,7 @@ public class BarChart3DWrapper : GeneralVisulizationWrapper
         }
         barChart.Initialize(presenter, _axisInformation[0].AxisPrefab, _style, _barChartMesh);
         barChart.BarThickness = (Vector2)_3DBarThickness;
-        barChart.ShowAxes = _axisInformation[0].ShowAxis;
+        //barChart.ShowAxes = _axisInformation[0].ShowAxis;
         barChart.Size = _visSize;
         barChart.Rebuild();
 

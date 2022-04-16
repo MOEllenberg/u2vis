@@ -219,6 +219,7 @@ namespace u2vis
         /// Generates the axis scales and labels for every axis view,
         /// using the axis presenter and data dimensions with the same index from the data presenter.
         /// </summary>
+        [ContextMenu("Rebuild2")]
         protected virtual void RebuildAxes()
         {
             if (_rebuildState.HasFlag(RebuildState.AxisSetup) || _fromEditor)
@@ -242,11 +243,18 @@ namespace u2vis
         {
             if (_rebuildState.HasFlag(RebuildState.Visualization))
                 RebuildVisualization();
-            if (_showAxes && _rebuildState.HasFlag(RebuildState.Axis))
+            if (_showAxes && (_rebuildState.HasFlag(RebuildState.Axis) || _rebuildState.HasFlag(RebuildState.All)))
+            {
+                Debug.Log("Here");
                 RebuildAxes();
+            }
             // if this was triggered by the editor,
             else if (_fromEditor && _axisViews != null)
+            {
                 DestroyAxisViews();
+                RebuildAxes();
+            }
+            Debug.Log("hi");
             _rebuildState = RebuildState.Nothing;
             OnRebuildFinished();
         }
@@ -284,12 +292,22 @@ namespace u2vis
         /// <summary>
         /// Rebuilds the Visualization and Axes (if visisble)
         /// </summary>
+        [ContextMenu("Rebuild")]
+       
+        public virtual void RebuildFromEditorCode()
+        {
+            _rebuildState = RebuildState.All;
+            Rebuild_Internal();
+            return;
+        }
         public virtual void Rebuild()
         {
             // If this was called from the editor, ignore lazyRebuild and
             // rebuild immediately, because update is never called.
+            Debug.Log(_fromEditor);
             if (_fromEditor)
             {
+                
                 _rebuildState = RebuildState.All;
                 Rebuild_Internal();
                 return;

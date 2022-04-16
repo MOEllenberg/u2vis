@@ -88,7 +88,7 @@ public class u2visGeneralController : MonoBehaviour
     /// </summary>
     //TODO: Needs rework, because u2vis does not scale Axes with size, only the mesh
     [SerializeField]
-    private Vector3 _defaultSize;
+    private Vector3 _defaultSize = new Vector3(0.9f, 0.9f, 0.9f);
     /// <summary>
     /// The default dimension indices
     /// </summary>
@@ -113,7 +113,12 @@ public class u2visGeneralController : MonoBehaviour
     /// The default style
     /// </summary>
     [SerializeField]
-    private GenericVisualizationStyle _defaultStyle;
+    private GenericVisualizationStyle _defaultStyle;    
+    /// <summary>
+    /// The default categorical style
+    /// </summary>
+    [SerializeField]
+    private GenericVisualizationStyle _defaultCategoricalStyle;
     /// <summary>
     /// The default 2D Bar Chart Mesh
     /// </summary>
@@ -224,7 +229,11 @@ public class u2visGeneralController : MonoBehaviour
     /// <summary>
     /// The Property for the default style
     /// </summary>
-    public GenericVisualizationStyle DefaultStyle { get => _defaultStyle; set => _defaultStyle = value; }
+    public GenericVisualizationStyle DefaultStyle { get => _defaultStyle; set => _defaultStyle = value; } 
+    /// <summary>
+    /// The Property for the default categorical Style
+    /// </summary>
+    public GenericVisualizationStyle DefaultCategoricalStyle { get => _defaultCategoricalStyle; set => _defaultCategoricalStyle = value; }
     /// <summary>
     /// The Property for the default 2D Bar Mesh
     /// </summary>

@@ -31,6 +31,7 @@ Transform:
   - {fileID: 5378982397350792988}
   - {fileID: 5378982397750464544}
   - {fileID: 5378982396764262393}
+  - {fileID: 6874627609014843353}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -55,11 +56,12 @@ MonoBehaviour:
   - {fileID: 7819944907640819384, guid: 8665d56bd4d3c064ea2ac141611e4c61, type: 3}
   - {fileID: 3350004290850267292, guid: a94a61348be7cd44599cba2bd949b9e9, type: 3}
   - {fileID: 8298903803571428384, guid: 852ee01ac4a60184083adff7f07ff86c, type: 3}
+  - {fileID: 8292310173839925582, guid: d3e14fa202df8a74a9506715656d258a, type: 3}
   _defaultDataProvider: {fileID: 5378982396608196078}
   _defaultCategoricalFlag: 0
   _defaultLabelOrientation: 1
   _defaultNumberOfTicks: 4
-  _defaultLabelInterval: 0
+  _defaultLabelInterval: 1
   _defaultLabelDecimalPlaces: 2
   _defaultAxisPrefab: {fileID: 5650031274069596738, guid: dc8563653dd0fe54883b634b92f049db,
     type: 3}
@@ -69,7 +71,8 @@ MonoBehaviour:
   _defaultMinItem: 0
   _defaultMaxItem: 5
   _defaultMultiDimIndices: 040000000500000006000000
-  _defaultStyle: {fileID: 5378982396439272195}
+  _defaultStyle: {fileID: 5378982398132073068}
+  _defaultCategoricalStyle: {fileID: 5378982396799214558}
   _default2DBarChartMesh: {fileID: 4300000, guid: 643f93ef952089e4ab1a9c7b86459170,
     type: 3}
   _default3DBarChartMesh: {fileID: 4300002, guid: 643f93ef952089e4ab1a9c7b86459170,
@@ -1166,3 +1169,74 @@ MonoBehaviour:
   _seperator: 59
   _rowBasedLayout: 0
   _seconFieldContainesDataType: 0
+--- !u!1 &8309106436573033997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6874627609014843353}
+  - component: {fileID: 1922369137197335885}
+  m_Layer: 0
+  m_Name: VisCreator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6874627609014843353
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8309106436573033997}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7191081676198666540}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1922369137197335885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8309106436573033997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9b5c36a5fc970c4cb6f5bcbf5e324ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _visualizationType: 0
+  _parentToBe: {fileID: 0}
+  _dataProvider: {fileID: 5378982398244499713}
+  _dimensionIndexes: 0000000001000000
+  _multiDimensionalIndexes: 040000000500000006000000
+  _creatorName: Dicks
+  _createWithDefaults: 1
+  _categoricalFlag: 0
+  _labelOrientation: 0
+  _numberOfTicks: 0
+  _labelInterval: 0
+  _labelDecimalPlaces: 0
+  _axisPrefab: {fileID: 0}
+  _showAxisFlag: 0
+  _size: {x: 0, y: 0, z: 0}
+  _minItem: 0
+  _maxItem: 0
+  _style: {fileID: 0}
+  _2DBarChartMesh: {fileID: 0}
+  _3DBarChartMesh: {fileID: 0}
+  _2DBarThickness: 1
+  _3DBarThickness: {x: 1, y: 1}
+  _areaMaterial: {fileID: 0}
+  _lineMaterial: {fileID: 0}
+  _scatterplotMaterial: {fileID: 0}
+  _minZoomLevel: {x: 0, y: 0, z: 0}
+  _maxZoomLevel: {x: 1, y: 1, z: 1}
+  _displayRelativeValues: 1

@@ -187,6 +187,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
 
         if ((colormappings == null || highlightcolor == null) && style == null)
         {
+            Debug.Log(style);
             Debug.LogError("either colormappings and highlightcolor or a style have to be set!");
             throw new Exception("either colormappings and highlightcolor or a style have to be set!");
         }
@@ -228,6 +229,10 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
 
     public abstract GeneralVisulizationWrapper Generate(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string name);
 
+    public void RebuildFromEditorCode()
+    {
+        VisualizationView.RebuildFromEditorCode();
+    }
 
     /// <summary>
     /// Initializes the visualization with the default values given in <see cref="u2visGeneralController"/>

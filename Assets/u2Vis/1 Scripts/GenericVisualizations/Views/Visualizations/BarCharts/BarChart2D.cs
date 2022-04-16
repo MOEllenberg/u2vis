@@ -41,6 +41,7 @@ namespace u2vis
         #endregion
 
         #region Protected Methods
+       
         protected override void RebuildVisualization()
         {
             if (_presenter == null || _presenter.NumberOfDimensions < 2)
