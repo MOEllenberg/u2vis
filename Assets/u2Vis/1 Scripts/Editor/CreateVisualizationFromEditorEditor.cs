@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using u2vis;
 using UnityEditor;
 using UnityEngine;
+using static GeneralVisulizationWrapper;
+using static u2visGeneralController;
 
 [CustomEditor(typeof(CreateVisualizationFromEditor))]
 public class CreateVisualizationFromEditorEditor : Editor
@@ -39,6 +42,17 @@ public class CreateVisualizationFromEditorEditor : Editor
         displayRelativeValues_prop;
 
     protected CreateVisualizationFromEditor _creatorScript = null;
+    public List<AxisInformationStruct> structs = new List<AxisInformationStruct>();
+    public List<bool> togglesCategorical = new List<bool>();
+    public bool testToggle;
+    public List<LabelOrientation> labelOrientation = new List<LabelOrientation>();
+    public List<int> numberOfTicksList = new List<int>();
+    public List<int> labelIntervalList = new List<int>();
+    public List<int> labelDecimalPlacesInt = new List<int>();
+    public List<GenericAxisView> axisPrefabList = new List<GenericAxisView>();
+    public List<bool> showAxisFlagList = new List<bool>();
+
+
 
     private void OnEnable()
     {
@@ -79,7 +93,15 @@ public class CreateVisualizationFromEditorEditor : Editor
         DrawGUIItems();
         serializedObject.ApplyModifiedProperties();
         if (GUILayout.Button("Build Visualization"))
+        {
+            structs.Clear();
+            for(int i=0;i < dimensionIndexes_prop.arraySize; i++)
+            {
+                    structs.Add(new AxisInformationStruct(togglesCategorical[i], showAxisFlagList[i], axisPrefabList[i], numberOfTicksList[i], labelIntervalList[i], labelOrientation[i], labelDecimalPlacesInt[i]));
+            }
+            _creatorScript.SetInformationStructList(structs);
             _creatorScript.CreateVisualization();
+        }
     }
 
     private void DrawGUIItems()
@@ -91,32 +113,81 @@ public class CreateVisualizationFromEditorEditor : Editor
         EditorGUILayout.PropertyField(multiDimensionalIndexes_prop);
         EditorGUILayout.PropertyField(creatorName_prop);
         EditorGUILayout.PropertyField(createWithDefaults_prop);
+        serializedObject.ApplyModifiedProperties();
+
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
         if (!createWithDefaults_prop.boolValue)
         {
-            //for (int i = 0; i < dimensionIndexes_prop.arraySize; i++) Create loop here to create axis information structs. not propertyfields but EnumPopUp etc
-            //{
-                EditorGUILayout.PropertyField(categoricalFlag_prop);
-                EditorGUILayout.PropertyField(labelOrientation_prop);
-                EditorGUILayout.PropertyField(numberOfTicks_prop);
-                EditorGUILayout.PropertyField(labelInterval_prop);
-                EditorGUILayout.PropertyField(labelDecimalPlaces_prop);
-                EditorGUILayout.PropertyField(axisPrefab_prop);
-                EditorGUILayout.PropertyField(showAxisFlag_prop);
-            //}
+            for (int i = 0; i < dimensionIndexes_prop.arraySize; i++) //Create loop here to create axis information structs. not propertyfields but EnumPopUp etc
+            {
+                switch (i)
+                {
+                    case 0: 
+                        EditorGUILayout.LabelField("X-Axis/Axis 1", EditorStyles.boldLabel);
+                        break;
+                    case 1:
+                        EditorGUILayout.LabelField("Y-Axis/Axis 2", EditorStyles.boldLabel);
+                        break;
+                    case 2:
+                        EditorGUILayout.LabelField("Z-Axis/Axis 3", EditorStyles.boldLabel);
+                        break;
+                    default:
+                        EditorGUILayout.LabelField($"Additional Axis {i-2}/Axis {i+1}", EditorStyles.boldLabel);
+                        break;
+                }
+                EditorGUILayout.Space();
+                togglesCategorical.Add(false);
+                labelOrientation.Add(LabelOrientation.Diagonal);
+                numberOfTicksList.Add(4);
+                labelIntervalList.Add(1);
+                labelDecimalPlacesInt.Add(1);
+                axisPrefabList.Add(u2visGeneralController.Instance.DefaultAxisPrefab);
+                showAxisFlagList.Add(true);
+                //testToggle = EditorGUILayout.Toggle("is categorical: ", testToggle);
+                togglesCategorical[i] = EditorGUILayout.Toggle("is categorical: ", togglesCategorical[i]);
+                labelOrientation[i] = (LabelOrientation)EditorGUILayout.EnumPopup("Label Orientation: ", labelOrientation[i]);
+                numberOfTicksList[i] = EditorGUILayout.IntField("Number of Ticks: ", numberOfTicksList[i]);
+                labelIntervalList[i] = EditorGUILayout.IntField("Label interval: ", labelIntervalList[i]);
+                labelDecimalPlacesInt[i] = EditorGUILayout.IntField("Label decimal places: ", labelDecimalPlacesInt[i]);
+                axisPrefabList[i] = (GenericAxisView)EditorGUILayout.ObjectField("Axis Prefab: ", axisPrefabList[i], typeof(GenericAxisView), true);
+                showAxisFlagList[i] = EditorGUILayout.Toggle("show axis: ", showAxisFlagList[i]);
+                EditorGUILayout.Space();
+                EditorGUILayout.Space();
+
+            }
             EditorGUILayout.PropertyField(size_prop);
             EditorGUILayout.PropertyField(minItem_prop);
             EditorGUILayout.PropertyField(maxItem_prop);
             EditorGUILayout.PropertyField(style_prop);
-            EditorGUILayout.PropertyField(_2DBarChartMesh_prop);
-            EditorGUILayout.PropertyField(_3DBarChartMesh_prop);
-            EditorGUILayout.PropertyField(_2DBarThickness_prop);
-            EditorGUILayout.PropertyField(_3DBarThickness_prop);
-            EditorGUILayout.PropertyField(areaMaterial_prop);
-            EditorGUILayout.PropertyField(lineMaterial_prop);
-            EditorGUILayout.PropertyField(scatterplotMaterial_prop);
-            EditorGUILayout.PropertyField(minZoomLevel_prop);
-            EditorGUILayout.PropertyField(maxZoomLevel_prop);
-            EditorGUILayout.PropertyField(displayRelativeValues_prop);
+            string enumName = visualizationType_prop.enumNames[visualizationType_prop.enumValueIndex];
+            if (enumName == VisType.BarChart2D.ToString()) 
+            {
+                EditorGUILayout.PropertyField(_2DBarChartMesh_prop);
+                EditorGUILayout.PropertyField(_2DBarThickness_prop);
+            }
+            if (enumName == VisType.BarChart3D.ToString())
+            {
+                EditorGUILayout.PropertyField(_3DBarChartMesh_prop);
+                EditorGUILayout.PropertyField(_3DBarThickness_prop);
+            }
+            if (enumName == VisType.BarChart2D.ToString()
+                || enumName == VisType.BarChart3D.ToString()
+                || enumName == VisType.HeightMap.ToString() 
+                || enumName == VisType.PieChart2D.ToString() 
+                || enumName == VisType.PieChart3D.ToString())
+                EditorGUILayout.PropertyField(areaMaterial_prop);
+            if (enumName == VisType.LineChart2D.ToString()
+                || enumName == VisType.LineChart3D.ToString()
+                || enumName == VisType.ParallelCoordinates.ToString())
+                EditorGUILayout.PropertyField(lineMaterial_prop);
+            if (enumName == VisType.Scatterplot.ToString())
+            {
+                EditorGUILayout.PropertyField(scatterplotMaterial_prop);
+                EditorGUILayout.PropertyField(minZoomLevel_prop);
+                EditorGUILayout.PropertyField(maxZoomLevel_prop);
+                EditorGUILayout.PropertyField(displayRelativeValues_prop);
+            }
         }
     }
 }

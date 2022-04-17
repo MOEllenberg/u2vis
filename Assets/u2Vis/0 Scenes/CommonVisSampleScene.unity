@@ -18755,18 +18755,33 @@ PrefabInstance:
       objectReference: {fileID: 482734812}
     - target: {fileID: 1922369137197335885, guid: 0c216ece4dad1424883ae055f5e5a0a3,
         type: 3}
+      propertyPath: _creatorName
+      value: Tutorial
+      objectReference: {fileID: 0}
+    - target: {fileID: 1922369137197335885, guid: 0c216ece4dad1424883ae055f5e5a0a3,
+        type: 3}
       propertyPath: _visualizationType
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1922369137197335885, guid: 0c216ece4dad1424883ae055f5e5a0a3,
         type: 3}
       propertyPath: _createWithDefaults
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1922369137197335885, guid: 0c216ece4dad1424883ae055f5e5a0a3,
+        type: 3}
+      propertyPath: _dimensionIndexes.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1922369137197335885, guid: 0c216ece4dad1424883ae055f5e5a0a3,
+        type: 3}
+      propertyPath: _dimensionIndexes.Array.data[2]
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2533207528381811158, guid: 0c216ece4dad1424883ae055f5e5a0a3,
         type: 3}
       propertyPath: _defaultNumberOfTicks
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4977017317121793392, guid: 0c216ece4dad1424883ae055f5e5a0a3,
         type: 3}

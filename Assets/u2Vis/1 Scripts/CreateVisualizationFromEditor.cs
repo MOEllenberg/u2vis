@@ -123,6 +123,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
 
     private AxisInformationStruct[] _axisInformationStructs = new AxisInformationStruct[2];
     private AxisInformationStruct[] _axisInformationStructs3D = new AxisInformationStruct[3];
+    private List<AxisInformationStruct> axisInformationStructsList = new List<AxisInformationStruct>();
 
     private u2visGeneralController _controller;
     public void Start()
@@ -130,6 +131,14 @@ public class CreateVisualizationFromEditor : MonoBehaviour
         _controller = u2visGeneralController.Instance;
     }
 
+    public void SetInformationStructList(List<AxisInformationStruct> listContent)
+    {
+        axisInformationStructsList = listContent;
+        for(int i = 0; i < listContent.Count; i++)
+        {
+            Debug.Log($"{i}: label interval: {listContent[i].LabelInterval}");
+        }
+    }
 
     [ContextMenu("Test!")]
     public void CreateVisualization()
@@ -341,21 +350,21 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             style: style
                         );
                     //because called from editor without update cycle:
                     wrapper.RebuildFromEditorCode();
                     break;
                 case u2visGeneralController.VisType.BarChart3D:
-                    BarChart3DWrapper wrapperBC3D = _controller.CreateVis<BarChart3DWrapper>(_dataProvider, new int[] { 0, 1, 2 }, _parentToBe, _creatorName);
+                    BarChart3DWrapper wrapperBC3D = _controller.CreateVis<BarChart3DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
                     wrapperBC3D.SetBarChart3DValues(new Vector2(0.9f, 0.9f), barChart3DMesh);
                     //TODO: size does not scale axes. Is a u2vis issue, not a wrapper issue. Has to be fixed some day in the future. Maybe use size for scale? Ask Marc
                     wrapperBC3D.Initilize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs3D,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                         );
@@ -368,7 +377,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs3D,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                         );
@@ -381,7 +390,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs3D,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                         );
@@ -394,7 +403,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs3D,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                          );
@@ -407,7 +416,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                         size: _size,
                         selectedMinItem: _minItem,
                         selectedMaxItem: _maxItem,
-                        axisInformation: _axisInformationStructs3D,
+                        axisInformation: axisInformationStructsList.ToArray(),
                         style: style
                         );
                     //because called from editor without update cycle:
@@ -419,7 +428,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs3D,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                         );
@@ -432,7 +441,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
-                            axisInformation: _axisInformationStructs3D,
+                            axisInformation: axisInformationStructsList.ToArray(),
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                         );
@@ -446,7 +455,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                         size: _size,
                         selectedMinItem: _minItem,
                         selectedMaxItem: _maxItem,
-                        axisInformation: _axisInformationStructs3D,
+                        axisInformation: axisInformationStructsList.ToArray(),
                         style: style
                         );
                     wrapperSC.RebuildFromEditorCode();

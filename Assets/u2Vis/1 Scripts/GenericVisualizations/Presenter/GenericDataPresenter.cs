@@ -257,7 +257,7 @@ namespace u2vis
             if (presenters.Length != NumberOfDimensions)
             {
                 Debug.LogError($"The amount of AxisPresenters ( {presenters.Length} ) does not match the Number of dimensions ( {NumberOfDimensions} )");
-                return;
+                //return;
             }
             _axisPresenters = presenters;
         }

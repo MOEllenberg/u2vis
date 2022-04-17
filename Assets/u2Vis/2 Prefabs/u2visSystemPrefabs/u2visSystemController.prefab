@@ -1226,9 +1226,9 @@ MonoBehaviour:
   _labelDecimalPlaces: 0
   _axisPrefab: {fileID: 0}
   _showAxisFlag: 0
-  _size: {x: 0, y: 0, z: 0}
+  _size: {x: 1, y: 1, z: 1}
   _minItem: 0
-  _maxItem: 0
+  _maxItem: 10
   _style: {fileID: 0}
   _2DBarChartMesh: {fileID: 0}
   _3DBarChartMesh: {fileID: 0}
