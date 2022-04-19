@@ -90,21 +90,49 @@ public class CreateVisualizationFromEditorEditor : Editor
     public override void OnInspectorGUI()
     {
         EditorGUI.BeginChangeCheck();
-        DrawGUIItems();
+        DrawGUIItemsA();
+        string enumName = visualizationType_prop.enumNames[visualizationType_prop.enumValueIndex];
+        if ((dimensionIndexes_prop.arraySize == 2 && enumName == VisType.BarChart2D.ToString())
+            || (dimensionIndexes_prop.arraySize >= 2 && enumName == VisType.LineChart2D.ToString())
+            || (dimensionIndexes_prop.arraySize >= 2 && enumName == VisType.ParallelCoordinates.ToString())
+            || (dimensionIndexes_prop.arraySize == 2 && enumName == VisType.PieChart2D.ToString())
+            || (dimensionIndexes_prop.arraySize >= 2 && enumName == VisType.Scatterplot.ToString())
+            || (dimensionIndexes_prop.arraySize == 3 && enumName == VisType.BarChart3D.ToString())
+            || (dimensionIndexes_prop.arraySize == 3 && enumName == VisType.HeightMap.ToString())
+            || (dimensionIndexes_prop.arraySize >= 3 && enumName == VisType.LineChart3D.ToString())
+            || (dimensionIndexes_prop.arraySize == 3 && enumName == VisType.PieChart3D.ToString()))
+        {
+            DrawGUIItemsB();
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("The number of dimension indices does not match the visualization type. Please change one of those factors accordingly!", MessageType.Warning);
+            return;
+        }
+
         serializedObject.ApplyModifiedProperties();
         if (GUILayout.Button("Build Visualization"))
         {
             structs.Clear();
             for(int i=0;i < dimensionIndexes_prop.arraySize; i++)
             {
+                if (!createWithDefaults_prop.boolValue)
+                {
+                    if (axisPrefabList[i] == null)
+                    {
+                        axisPrefabList[i] = u2visGeneralController.Instance.DefaultAxisPrefab;
+                    }
                     structs.Add(new AxisInformationStruct(togglesCategorical[i], showAxisFlagList[i], axisPrefabList[i], numberOfTicksList[i], labelIntervalList[i], labelOrientation[i], labelDecimalPlacesInt[i]));
+                }
+                else
+                    structs.Add(new AxisInformationStruct(u2visGeneralController.Instance.DefaultCategoricalFlag, u2visGeneralController.Instance.DefaultShowAxisFlag, u2visGeneralController.Instance.DefaultAxisPrefab, u2visGeneralController.Instance.DefaultNumberOfTicks, u2visGeneralController.Instance.DefaultLabelIntervall, u2visGeneralController.Instance.DefaultLabelOrientation, u2visGeneralController.Instance.DefaultLabelDecimalPlaces));
             }
             _creatorScript.SetInformationStructList(structs);
             _creatorScript.CreateVisualization();
         }
     }
 
-    private void DrawGUIItems()
+    private void DrawGUIItemsA()
     {
         EditorGUILayout.PropertyField(visualizationType_prop);
         EditorGUILayout.PropertyField(parentToBe_prop);
@@ -117,23 +145,29 @@ public class CreateVisualizationFromEditorEditor : Editor
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
+        
+    }
+
+    private void DrawGUIItemsB()
+    {
         if (!createWithDefaults_prop.boolValue)
         {
+            AbstractDataProvider _provider = _creatorScript.GetDataProviderSet();
             for (int i = 0; i < dimensionIndexes_prop.arraySize; i++) //Create loop here to create axis information structs. not propertyfields but EnumPopUp etc
             {
                 switch (i)
                 {
-                    case 0: 
-                        EditorGUILayout.LabelField("X-Axis/Axis 1", EditorStyles.boldLabel);
+                    case 0:
+                        EditorGUILayout.LabelField($"X-Axis/Axis 1 [{_provider.Data[dimensionIndexes_prop.GetArrayElementAtIndex(i).intValue].Name}]", EditorStyles.boldLabel);
                         break;
                     case 1:
-                        EditorGUILayout.LabelField("Y-Axis/Axis 2", EditorStyles.boldLabel);
+                        EditorGUILayout.LabelField($"Y-Axis/Axis 2 [{_provider.Data[dimensionIndexes_prop.GetArrayElementAtIndex(i).intValue].Name}]", EditorStyles.boldLabel);
                         break;
                     case 2:
-                        EditorGUILayout.LabelField("Z-Axis/Axis 3", EditorStyles.boldLabel);
+                        EditorGUILayout.LabelField($"Z-Axis/Axis 3 [{_provider.Data[dimensionIndexes_prop.GetArrayElementAtIndex(i).intValue].Name}]", EditorStyles.boldLabel);
                         break;
                     default:
-                        EditorGUILayout.LabelField($"Additional Axis {i-2}/Axis {i+1}", EditorStyles.boldLabel);
+                        EditorGUILayout.LabelField($"Additional Axis {i - 2}/Axis {i + 1} [{_provider.Data[dimensionIndexes_prop.GetArrayElementAtIndex(i).intValue].Name}]", EditorStyles.boldLabel);
                         break;
                 }
                 EditorGUILayout.Space();
@@ -161,7 +195,7 @@ public class CreateVisualizationFromEditorEditor : Editor
             EditorGUILayout.PropertyField(maxItem_prop);
             EditorGUILayout.PropertyField(style_prop);
             string enumName = visualizationType_prop.enumNames[visualizationType_prop.enumValueIndex];
-            if (enumName == VisType.BarChart2D.ToString()) 
+            if (enumName == VisType.BarChart2D.ToString())
             {
                 EditorGUILayout.PropertyField(_2DBarChartMesh_prop);
                 EditorGUILayout.PropertyField(_2DBarThickness_prop);
@@ -173,8 +207,8 @@ public class CreateVisualizationFromEditorEditor : Editor
             }
             if (enumName == VisType.BarChart2D.ToString()
                 || enumName == VisType.BarChart3D.ToString()
-                || enumName == VisType.HeightMap.ToString() 
-                || enumName == VisType.PieChart2D.ToString() 
+                || enumName == VisType.HeightMap.ToString()
+                || enumName == VisType.PieChart2D.ToString()
                 || enumName == VisType.PieChart3D.ToString())
                 EditorGUILayout.PropertyField(areaMaterial_prop);
             if (enumName == VisType.LineChart2D.ToString()
@@ -188,6 +222,7 @@ public class CreateVisualizationFromEditorEditor : Editor
                 EditorGUILayout.PropertyField(maxZoomLevel_prop);
                 EditorGUILayout.PropertyField(displayRelativeValues_prop);
             }
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

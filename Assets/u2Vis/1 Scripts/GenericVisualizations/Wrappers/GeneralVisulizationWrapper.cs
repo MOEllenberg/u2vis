@@ -151,7 +151,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     }
 
     /// <summary>
-    /// Creates a new visualization. Visualization gets its <see cref="VisType"/>, ID and the creator name. It still needs to be initilized with either <see cref="Initilize"/> or <see cref="InitilizeWithDefaults"/>
+    /// Creates a new visualization. Visualization gets its <see cref="VisType"/>, ID and the creator name. It still needs to be initilized with either <see cref="Initialize"/> or <see cref="InitializeWithDefaults"/>
     /// </summary>
     /// <param name="visType"></param>
     /// <param name="creatorName"></param>
@@ -168,16 +168,16 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     /// <summary>
     /// Initializes the visualization with the given values.
     /// </summary>
-    /// <param name="size"></param>
-    /// <param name="dataProvider"></param>
+    /// <param name="size">The size of the Visualization.</param>
+    /// <param name="dataProvider">The dataprovider of the visualization</param>
     /// <param name="selectedMinItem"></param>
     /// <param name="selectedMaxItem"></param>
-    /// <param name="axisInformation"></param>
+    /// <param name="axisInformation">The AxisInformationStructs used to create the axes.</param>
     /// <param name="indicesOfMultiDimensionDataDimensions">Only needs to be used for Visualizations with a <see cref="MultiDimDataPresenter"/>, otherwise should be null</param>
     /// <param name="colormappings">only needs to be used if no <see cref="GenericVisualizationStyle"/> is provided with style. Will create a new Style together with highlightcolor.</param>
     /// <param name="highlightcolor">only needs to be used if no <see cref="GenericVisualizationStyle"/> is provided with style. Will create a new Style attached to this visualization together with colormappings.</param>
     /// <param name="style">only needs to be used if neither colormappings or highlightcolor are provided. Is a refrence to an extern style, which will be used for the visualization.</param>
-    public void Initilize(Vector3 size, int selectedMinItem, int selectedMaxItem, AxisInformationStruct[] axisInformation, int[] indicesOfMultiDimensionDataDimensions = null, Gradient[] colormappings = null, Color? highlightcolor = null, GenericVisualizationStyle style = null)
+    public void Initialize(Vector3 size, int selectedMinItem, int selectedMaxItem, AxisInformationStruct[] axisInformation, int[] indicesOfMultiDimensionDataDimensions = null, Gradient[] colormappings = null, Color? highlightcolor = null, GenericVisualizationStyle style = null)
     {
         if (initilized)
         {
@@ -237,7 +237,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     /// <summary>
     /// Initializes the visualization with the default values given in <see cref="u2visGeneralController"/>
     /// </summary>
-    public void InitilizeWithDefaults()
+    public void InitializeWithDefaults()
     {
 
         if (initilized)
@@ -282,7 +282,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
 
     #region set axis values by axis index
     /// <summary>
-    /// sets the axis properties for the axis with index axisIndex. if a value of a property is left out, it will be null and then default to the old propertie.
+    /// sets the axis properties for the axis with index axisIndex. if a value of a property is left out, it will be null and then default to the old property.
     /// </summary>
     /// <param name="axisIndex"></param>
     /// <param name="dimensionIndexToBe"></param>
@@ -325,6 +325,7 @@ public abstract class GeneralVisulizationWrapper : MonoBehaviour
     #endregion
 
     #region updates
+    [ContextMenu("UpdateVis with new Values!")]
     /// <summary>
     /// Updates the complete visualization with a complete rebuild.
     /// </summary>

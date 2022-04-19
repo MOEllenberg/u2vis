@@ -38,11 +38,7 @@ public class u2visGeneralController : MonoBehaviour
         Scatterplot,
         //StackedBar
     }
-    /// <summary>
-    /// List of the default visualization prefabs.
-    /// </summary>
-    [SerializeField]
-    private List<GameObject> _defaultVisPrefabs = new List<GameObject>();
+
     /// <summary>
     /// The default Data Provider.
     /// </summary>
@@ -277,6 +273,15 @@ public class u2visGeneralController : MonoBehaviour
         _visulizations.Remove(id);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"> This has to be of type GeneralVisualizationWrapper and describes the type of wrapper you want to use and thereby the type of the visualization.</typeparam>
+    /// <param name="dataProvider">The dataprovider which should be used for the visualization.</param>
+    /// <param name="dimIndices">The dimension indices used for the visualization</param>
+    /// <param name="parent">The parent game object from which the visualization should be a child</param>
+    /// <param name="creatorName">The name of the creator</param>
+    /// <returns></returns>
     public T CreateVis<T>(AbstractDataProvider dataProvider, int[] dimIndices, Transform parent, string creatorName) where T: GeneralVisulizationWrapper
     {
         GameObject object1 = new GameObject();

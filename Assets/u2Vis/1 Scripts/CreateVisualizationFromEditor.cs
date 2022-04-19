@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using u2vis;
+using u2vis.ARGH;
 using UnityEngine;
 using static GeneralVisulizationWrapper;
 using static u2visGeneralController;
@@ -131,6 +132,10 @@ public class CreateVisualizationFromEditor : MonoBehaviour
         _controller = u2visGeneralController.Instance;
     }
 
+    public AbstractDataProvider GetDataProviderSet()
+    {
+        return _dataProvider;
+    }
     public void SetInformationStructList(List<AxisInformationStruct> listContent)
     {
         axisInformationStructsList = listContent;
@@ -146,7 +151,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
         Start();
         
         //int[] multidim = { 0, 1, 2, 3 };
-        if (_createWithDefaults)
+        if (_createWithDefaults) //@TODO: should also work with the usage of InitilizeWithDefaults instead of initialize. i did not check.
         {
             _axisInformationStructs[0] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
             _axisInformationStructs[1] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
@@ -160,7 +165,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                 case u2visGeneralController.VisType.BarChart2D:
                     BarChart2DWrapper wrapper = _controller.CreateVis<BarChart2DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
                     wrapper.SetBarChart2DValues(0.9f, _controller.Default2DBarChartMesh);
-                    wrapper.Initilize(
+                    wrapper.Initialize(
                             size: _controller.DefaultSize,
                             selectedMinItem: _controller.DefaultMinItem,
                             selectedMaxItem: _controller.DefaultMaxItem,
@@ -174,7 +179,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     BarChart3DWrapper wrapperBC3D = _controller.CreateVis<BarChart3DWrapper>(_dataProvider, new int[] { 0,1,2}, _parentToBe, _creatorName);
                     wrapperBC3D.SetBarChart3DValues(new Vector2(0.9f, 0.9f), _controller.Default3DBarChartMesh);
                     //TODO: size does not scale axes. Is a u2vis issue, not a wrapper issue. Has to be fixed some day in the future. Maybe use size for scale? Ask Marc
-                    wrapperBC3D.Initilize(
+                    wrapperBC3D.Initialize(
                             size: _controller.DefaultSize,
                             selectedMinItem: _controller.DefaultMinItem,
                             selectedMaxItem: _controller.DefaultMaxItem,
@@ -187,7 +192,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.HeightMap:
                     HeightMapWrapper wrapperHM = _controller.CreateVis<HeightMapWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperHM.Initilize(
+                    wrapperHM.Initialize(
                             size: _controller.DefaultSize,
                             selectedMinItem: _controller.DefaultMinItem,
                             selectedMaxItem: _controller.DefaultMaxItem,
@@ -200,7 +205,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.LineChart2D:
                     LineChart2DWrapper wrapperLC2D = _controller.CreateVis<LineChart2DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperLC2D.Initilize(
+                    wrapperLC2D.Initialize(
                             size: _controller.DefaultSize,
                             selectedMinItem: _controller.DefaultMinItem,
                             selectedMaxItem: _controller.DefaultMaxItem,
@@ -213,7 +218,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.LineChart3D:
                     LineChart3DWrapper wrapperLC3D = _controller.CreateVis<LineChart3DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperLC3D.Initilize(
+                    wrapperLC3D.Initialize(
                             size: _controller.DefaultSize,
                             selectedMinItem: _controller.DefaultMinItem,
                             selectedMaxItem: _controller.DefaultMaxItem,
@@ -230,7 +235,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     axisInformationStructPC[1] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
                     axisInformationStructPC[2] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
                     ParallelCoordinatesWrapper wrapperPC = _controller.CreateVis<ParallelCoordinatesWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperPC.Initilize(
+                    wrapperPC.Initialize(
                         size: new Vector3(2, 1, 1),
                         selectedMinItem: _controller.DefaultMinItem,
                         selectedMaxItem: _controller.DefaultMaxItem,
@@ -242,7 +247,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.PieChart2D:
                     PieChart2DWrapper wrapperPC2D = _controller.CreateVis<PieChart2DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperPC2D.Initilize(
+                    wrapperPC2D.Initialize(
                         size: _controller.DefaultSize,
                         selectedMinItem: _controller.DefaultMinItem,
                         selectedMaxItem: _controller.DefaultMaxItem,
@@ -255,7 +260,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.PieChart3D:
                     PieChart3DWrapper wrapperPC3D = _controller.CreateVis<PieChart3DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperPC3D.Initilize(
+                    wrapperPC3D.Initialize(
                         size: _controller.DefaultSize,
                         selectedMinItem: _controller.DefaultMinItem,
                         selectedMaxItem: _controller.DefaultMaxItem,
@@ -273,7 +278,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     axisInformationStructSP[0] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
                     axisInformationStructSP[1] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
                     axisInformationStructSP[2] = new AxisInformationStruct(_controller.DefaultCategoricalFlag, _controller.DefaultShowAxisFlag, _controller.DefaultAxisPrefab, _controller.DefaultNumberOfTicks, _controller.DefaultLabelIntervall, _controller.DefaultLabelOrientation, _controller.DefaultLabelDecimalPlaces);
-                    wrapperSC.Initilize(
+                    wrapperSC.Initialize(
                         size: _controller.DefaultSize,
                         selectedMinItem: _controller.DefaultMinItem,
                         selectedMaxItem: _controller.DefaultMaxItem,
@@ -346,13 +351,15 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     BarChart2DWrapper wrapper = _controller.CreateVis<BarChart2DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
                     
                     wrapper.SetBarChart2DValues(0.9f, barChart2DMesh);
-                    wrapper.Initilize(
+                    wrapper.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
                             axisInformation: axisInformationStructsList.ToArray(),
                             style: style
                         );
+                    BarChart2D_Interaction interaction = wrapper.gameObject.AddComponent<BarChart2D_Interaction>();
+                    interaction.Initialize(wrapper.GetComponent<GenericDataPresenter>(), wrapper.GetComponent<BaseVisualizationView>());
                     //because called from editor without update cycle:
                     wrapper.RebuildFromEditorCode();
                     break;
@@ -360,7 +367,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     BarChart3DWrapper wrapperBC3D = _controller.CreateVis<BarChart3DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
                     wrapperBC3D.SetBarChart3DValues(new Vector2(0.9f, 0.9f), barChart3DMesh);
                     //TODO: size does not scale axes. Is a u2vis issue, not a wrapper issue. Has to be fixed some day in the future. Maybe use size for scale? Ask Marc
-                    wrapperBC3D.Initilize(
+                    wrapperBC3D.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
@@ -368,12 +375,15 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                             indicesOfMultiDimensionDataDimensions: _multiDimensionalIndexes.ToArray(),
                             style: style
                         );
+                    BarChart3D_Interaction interactionBC3D = wrapperBC3D.gameObject.AddComponent<BarChart3D_Interaction>();
+                    interactionBC3D.Initialize(wrapperBC3D.GetComponent<GenericDataPresenter>(), wrapperBC3D.GetComponent<BaseVisualizationView>());
                     //because called from editor without update cycle:
                     wrapperBC3D.RebuildFromEditorCode();
+
                     break;
                 case u2visGeneralController.VisType.HeightMap:
                     HeightMapWrapper wrapperHM = _controller.CreateVis<HeightMapWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperHM.Initilize(
+                    wrapperHM.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
@@ -386,7 +396,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.LineChart2D:
                     LineChart2DWrapper wrapperLC2D = _controller.CreateVis<LineChart2DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperLC2D.Initilize(
+                    wrapperLC2D.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
@@ -399,7 +409,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.LineChart3D:
                     LineChart3DWrapper wrapperLC3D = _controller.CreateVis<LineChart3DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperLC3D.Initilize(
+                    wrapperLC3D.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
@@ -412,7 +422,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.ParallelCoordinates:
                     ParallelCoordinatesWrapper wrapperPC = _controller.CreateVis<ParallelCoordinatesWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperPC.Initilize(
+                    wrapperPC.Initialize(
                         size: _size,
                         selectedMinItem: _minItem,
                         selectedMaxItem: _maxItem,
@@ -424,7 +434,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.PieChart2D:
                     PieChart2DWrapper wrapperPC2D = _controller.CreateVis<PieChart2DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperPC2D.Initilize(
+                    wrapperPC2D.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
@@ -437,7 +447,7 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                     break;
                 case u2visGeneralController.VisType.PieChart3D:
                     PieChart3DWrapper wrapperPC3D = _controller.CreateVis<PieChart3DWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
-                    wrapperPC3D.Initilize(
+                    wrapperPC3D.Initialize(
                             size: _size,
                             selectedMinItem: _minItem,
                             selectedMaxItem: _maxItem,
@@ -451,13 +461,15 @@ public class CreateVisualizationFromEditor : MonoBehaviour
                 case u2visGeneralController.VisType.Scatterplot:
                     ScatterplotWrapper wrapperSC = _controller.CreateVis<ScatterplotWrapper>(_dataProvider, _dimensionIndexes.ToArray(), _parentToBe, _creatorName);
                     wrapperSC.SetScatterplotValues(_minZoomLevel, _maxZoomLevel, _displayRelativeValues);
-                    wrapperSC.Initilize(
+                    wrapperSC.Initialize(
                         size: _size,
                         selectedMinItem: _minItem,
                         selectedMaxItem: _maxItem,
                         axisInformation: axisInformationStructsList.ToArray(),
                         style: style
                         );
+                    ScatterPlotInteraction  interactionSC = wrapperSC.gameObject.AddComponent<ScatterPlotInteraction>();
+                    interactionSC.Initialize(wrapperSC.GetComponent<GenericDataPresenter>(), wrapperSC.GetComponent<BaseVisualizationView>());
                     wrapperSC.RebuildFromEditorCode();
                     break;
             }
