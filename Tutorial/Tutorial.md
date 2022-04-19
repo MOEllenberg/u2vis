@@ -8,25 +8,36 @@ To use u2vis, you simply have to import the u2vis files and add the u2visSystemC
 
 ## General Structure of an Visualization
 
-A u2vis visualization ![](./pictures/SingleVis.png)has two main script components. The DataPresenter ![](./pictures/SingleVis_DataPresenter.png)and the VisualizationView ![](./pictures/SingleVis_ViewScript.png) which are used to define and produce a visualization. Additionally the DataPresenter needs a DataProvider ![](./pictures/SingleVis_DataProvider.png) which manages the underlying data. The DataPresenter is used to define which Data from the source (DataProvider) are used and how the Axis should look like. The Visualization script itself uses this information to create the needed Axes and DataMeshes for the visualization. Visualizations, which are correctly created with the u2visSystemController additionally will have a wrapper attached. ![](./pictures/Wrapper.png)
+A u2vis visualization ![](./pictures/SingleVis.png)
+has two main script components. The DataPresenter
+![](./pictures/SingleVis_dataPresenter.png)
+and the VisualizationView 
+![](./pictures/SingleVis_ViewScript.png) 
+which are used to define and produce a visualization. Additionally the DataPresenter needs a DataProvider 
+![](./pictures/SingleVis_DataProvider.png) 
+which manages the underlying data. The DataPresenter is used to define which Data from the source (DataProvider) are used and how the Axis should look like. The Visualization script itself uses this information to create the needed Axes and DataMeshes for the visualization. Visualizations, which are correctly created with the u2visSystemController additionally will have a wrapper attached. 
+![](./pictures/Wrapper.png)
 
-This wrapper holds additional information like the id and the creator name, as well as some redundant information from the creation process. As of now an in editor update of visualizations created with the system controller is not supported. We advice the user to create a new visualization instead. 
+This wrapper holds additional information like the id and the creator name, as well as some information from the creation process. As of now an in editor update of visualizations created with the system controller is not supported. We advice the user to create a new visualization instead. 
 
 ## The System Controller
 
 ### General Structure
 
-The u2visSystemController-GameObject has the appropriate script, the u2visGeneralController attached. ![](./pictures/MarkedSystemController_02.png)
+The u2visSystemController-GameObject has the appropriate script, the u2visGeneralController attached. 
+![](./pictures/MarkedSystemController_02.png)
 
 The fields of this system controller store the default values for the visualization creation from code as well as from the editor. If you whish to change them, you can do that here. The system controller stores all visualizations correctly created with it and manages the creations as well as the basic id system. As it is a Singleton, it only is in the application once.
 
 The System controller GameObject has 4 attached. 3 of those hold examples an defaults, the 4th is for the in Editor creation. 
 
-The first GameObject (Data) holds a number of example DataProviders, one of those is the "factory default".![](./pictures/DataProviderExamples.png)
+The first GameObject (Data) holds a number of example DataProviders, one of those is the "factory default".
+![](./pictures/DataProviderExamples.png)
 
 These DataProviders can be used as the source for data in the creation process, alternatively you can create your own data providers or change the source files of the given ones. You can then later attach those to your custom scripts for the in code creation or you can link them in the in editor creation.
 
-The second child GameObject holds some example styles. These you can either use, edit or create your own after this. The styles are used to define the color scheme of the visualization. ![](./pictures/StyleExamples.png)
+The second child GameObject holds some example styles. These you can either use, edit or create your own after this. The styles are used to define the color scheme of the visualization. 
+![](./pictures/StyleExamples.png)
 
 The 3rd Child is an example/default Linking group, needed for brushing and linking.
 
@@ -34,13 +45,19 @@ The 3rd Child is an example/default Linking group, needed for brushing and linki
 
 The 4th child object of the system controller is used to create visualizations from within the editor.
 
-To Create a visualization, you select this child in the scene hierarchy on the left, and use the provided component on the right. ![](./pictures/VisCreatorBig_marked.png)Here you can select a visualization type, the parent, where the visualization should be spawned, the data provider which provides the source data. You then choose which dimensions you want to use, by entering those in the Dimension indices list. ![](./pictures/CreateVisShort_dimIndexes.png) 
+To Create a visualization, you select this child in the scene hierarchy on the left, and use the provided component on the right. 
+![](./pictures/VisCreatorBig_marked.png)
+Here you can select a visualization type, the parent, where the visualization should be spawned, the data provider which provides the source data. You then choose which dimensions you want to use, by entering those in the Dimension indices list. 
+![](./pictures/CreateVisShort_dimIndexes.png) 
 
-For Visualizations, which support it, you can then also chose multidimensional indices. ![](./pictures/MultiDimIndices_marked.png)
+For Visualizations, which support it, you can then also chose multidimensional indices. 
+![](./pictures/MultiDimIndices_marked.png)
 
-This is useful for 3DBarCharts or 3DLineCharts. You have to enter a creator name afterwards and if you want to spawn the visualization with the defaults from the u2visGeneralController, you mark the tick box. Then you can press Build Visualization and you will have one created. ![](./pictures/CreateVisShort_defaults.png)
+This is useful for 3DBarCharts or 3DLineCharts. You have to enter a creator name afterwards and if you want to spawn the visualization with the defaults from the u2visGeneralController, you mark the tick box. Then you can press Build Visualization and you will have one created. 
+![](./pictures/CreateVisShort_defaults.png)
 
-If the amount of given dimension indices does not match the visualization type, an error will appear and you will have to change your settings accordingly. ![](./pictures/CreateVisError.png)
+If the amount of given dimension indices does not match the visualization type, an error will appear and you will have to change your settings accordingly. 
+![](./pictures/CreateVisError.png)
 
 If you don't want to use the default settings, you untick the defaults box and will be presented with the settings for the different axes and additional general settings. These might change for different visualizations, as some need more information than others. 
 
